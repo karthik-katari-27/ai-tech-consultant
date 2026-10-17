@@ -1,0 +1,23 @@
+[
+  {
+    "id": "fictional-profile-photo",
+    "title": "Fictional Guide: Updating a Profile Photo",
+    "url": "https://example.test/support/profile-photo",
+    "text": "This is fictional test data. In this imaginary product, a member opens Profile Settings, selects a new image, and saves the change. No real service or support article is referenced.",
+    "source_type": "fictional_test_data"
+  },
+  {
+    "id": "fictional-email-notification",
+    "title": "Fictional Guide: Checking Email Notifications",
+    "url": "https://example.test/support/email-notifications",
+    "text": "This is fictional test data. In this imaginary product, an administrator opens Notification Preferences, enables a weekly summary, and confirms the setting. No real service or support article is referenced.",
+    "source_type": "fictional_test_data"
+  },
+  {
+    "id": "fictional-directory-listing",
+    "title": "Fictional Guide: Publishing a Directory Listing",
+    "url": "https://example.test/support/publish-listing",
+    "text": "This is fictional test data. In this imaginary product, an editor reviews a draft listing, chooses Publish, and verifies that it appears in a sample directory. No real service or support article is referenced.",
+    "source_type": "fictional_test_data"
+  }
+]
