@@ -66,7 +66,7 @@ Implemented components:
 - Explicit human-review and approval-status fields.
 - Automated tests using mocked responses.
 
-The latest reported dedicated test run passed five tests.
+The latest reported dedicated test run passed ten tests.
 
 The prototype is a Python module, not a standalone HTTP API or meeting-platform integration.
 
@@ -294,7 +294,7 @@ The latest reported dedicated run passed five tests.
 
 The reported combined total of 51 passing tests represents separate test runs, not a single combined discovery run.
 
-Task 2 and Task 3 tests mock the model and Knowledge Brain calls. Their results establish behavior under the tested mock scenarios, not live model accuracy or end-to-end reliability.
+The automated Task 2 and Task 3 tests use mocked model and Knowledge Brain responses. Separate manual live tests were also completed for both workflows using fictional data with Ollama and the Knowledge Brain API. These tests demonstrate that the workflows can run end to end for the tested examples; they do not establish representative real-world accuracy or production reliability.
 
 Task 1's local AI endpoint has had a live test with fictional reference material. The Inbox Agent and Meeting-to-Scope workflows still require live end-to-end verification.
 
@@ -329,7 +329,7 @@ Current limitations include:
 
 Recommended future work:
 
-1. Perform live end-to-end tests for Task 2 and Task 3 with fictional data.
+1. Expand live end-to-end testing for Task 2 and Task 3 across additional fictional examples, edge cases, and failure scenarios.
 2. Add reviewed evaluation examples for email classification and scope extraction.
 3. Measure retrieval relevance and document the evaluation method.
 4. Evaluate grounding, source attribution, and unsupported claims.

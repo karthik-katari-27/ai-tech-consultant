@@ -28,20 +28,20 @@ The evaluation process should:
 
 ## 3. Current Automated Test Results
 
-The latest reported automated test runs passed all 51 tests across three separate runs.
+The latest reported automated test runs passed all 56 tests across three separate runs.
 
 | Project | Tests passed | Test approach |
 |---|---:|---|
 | Task 1 — Knowledge Brain | 41 | API, article handling, service, and related unit tests |
 | Task 2 — Inbox Agent | 5 | Mocked model and Knowledge Brain responses |
-| Task 3 — Meeting-to-Scope of Work | 5 | Mocked model and Knowledge Brain responses |
-| **Total** | **51** | **Separate test runs** |
+| Task 3 — Meeting-to-Scope of Work | 10 | Mocked model and Knowledge Brain responses |
+| **Total** | **56** | **Separate test runs** |
 
 These results were reported by the user during development on October 18, 2026.
 
 The Task 2 and Task 3 tests do not make live AI requests. They verify selected behaviors using mocked responses. Their results do not establish real-world classification accuracy, draft quality, or live end-to-end reliability.
 
-The 51 tests were run as three separate suites, not as one combined test-discovery command.
+The 56 tests were run as three separate suites, not as one combined test-discovery command.
 
 ## 4. Reproducing the Automated Tests
 
@@ -71,7 +71,7 @@ The tests cover email validation, classification parsing, draft generation, sour
 .\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task3-meeting-to-scope\tests -p test_meeting_to_scope.py -v
 ```
 
-Reported result: 5 tests passed.
+Reported result: 10 tests passed.
 
 The tests cover empty-transcript validation, structured draft generation, missing references, invalid model JSON, and field-type validation.
 

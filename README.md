@@ -180,9 +180,10 @@ Run each task's tests separately from the repository root.
 ```
 
 At the latest reported test run, the three suites passed separately:
-- Task 1: 41 tests.
-- Task 2: 5 tests.
-- Task 3: 5 tests.
+- Task 1: 41 tests passed.
+- Task 2: 5 tests passed.
+- Task 3: 10 tests passed.
+- **Total: 56 tests passed across three separate test runs.**
 
 These are automated test results, primarily using mocked responses. They do not establish the accuracy of AI-generated results on real customer data or prove that all live integrations work end to end.
 
