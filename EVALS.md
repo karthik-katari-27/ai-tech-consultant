@@ -97,21 +97,30 @@ The response also included the source title and URL and identified the material 
 
 **Limitations:** This was a single live request using fictional reference data. It does not establish general answer accuracy, retrieval quality, or production reliability.
 
-### Task 2 — Inbox Agent
+### ### Task 2 — Inbox Agent
 
-The automated tests used mocked responses from the model and Knowledge Brain API.
+**Live test date:** October 18, 2026
 
-**Live end-to-end evaluation:** Not yet recorded.
+**Test data:** A fictional support email asking how to publish a directory listing.
 
-The workflow still needs to be exercised with a running Knowledge Brain API and Ollama model using fictional email content. No production email integration has been evaluated.
+**Test environment:** Ollama with Qwen2.5 7B and the Knowledge Brain API running locally on port 8001. Port 8000 was serving a different application and did not expose the required Knowledge Brain endpoints.
+
+**Observed result:** The live workflow classified the email as `listing_publishing`, generated a draft reply, retrieved article references, and returned `requires_human_review: true` and `sent: false`.
+
+**Known limitations:** Retrieval included articles that were unrelated or only potentially relevant to the publishing question. The returned references were fictional test data, not verified Brilliant Directories documentation. This was one manual test and does not establish classification accuracy or production reliability.
 
 ### Task 3 — Meeting-to-Scope of Work
 
-The automated tests used mocked responses from the model and Knowledge Brain API.
+**Live test date:** October 18, 2026
 
-**Live end-to-end evaluation:** Not yet recorded.
+**Test data:** A fictional meeting transcript about a directory website, listing publication, notification requirements, budget, delivery date, and acceptance criteria.
 
-The workflow still needs to be exercised with a running Knowledge Brain API and Ollama model using a fictional meeting transcript. Generated requirements, assumptions, deliverables, and risks must be checked against the transcript.
+**Test environment:** Ollama with Qwen2.5 7B and the Knowledge Brain API running locally on port 8001.
+
+**Observed result:** The live workflow returned a structured draft containing customer goals, requirements, deliverables, assumptions, risks, open questions, knowledge gaps, and source references. It correctly returned `requires_human_review: true`, `approved: false`, and `finalized: false`.
+
+**Known limitations:** One live test does not establish the accuracy or completeness of generated scopes. Some unresolved decisions appeared under assumptions instead of only under open questions. Retrieval also included potentially irrelevant references. Human review remains mandatory.
+
 
 ## 6. Planned Knowledge Brain Retrieval Evaluation
 
