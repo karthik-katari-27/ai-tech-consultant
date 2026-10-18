@@ -97,29 +97,32 @@ The response also included the source title and URL and identified the material 
 
 **Limitations:** This was a single live request using fictional reference data. It does not establish general answer accuracy, retrieval quality, or production reliability.
 
-### ### Task 2 — Inbox Agent
+### Task 2 — Inbox Agent
 
 **Live test date:** October 18, 2026
 
-**Test data:** A fictional support email asking how to publish a directory listing.
+**Test data:** A fictional customer email asking how to publish a directory listing.
 
-**Test environment:** Ollama with Qwen2.5 7B and the Knowledge Brain API running locally on port 8001. Port 8000 was serving a different application and did not expose the required Knowledge Brain endpoints.
+**Test environment:** Ollama with Qwen2.5 7B and the Knowledge Brain API on `http://127.0.0.1:8001`. The API on port 8000 exposed different routes and returned HTTP 404 for `/ask`.
 
-**Observed result:** The live workflow classified the email as `listing_publishing`, generated a draft reply, retrieved article references, and returned `requires_human_review: true` and `sent: false`.
+**Observed results:** The live workflow classified the email as `listing_publishing`, generated a draft reply, retrieved source references, and returned `requires_human_review: true` and `sent: false`.
 
-**Known limitations:** Retrieval included articles that were unrelated or only potentially relevant to the publishing question. The returned references were fictional test data, not verified Brilliant Directories documentation. This was one manual test and does not establish classification accuracy or production reliability.
+An initial test containing the phrase "fictional test email" returned three articles, including unrelated topics. After removing that phrase, a subsequent run returned only the relevant directory-listing article.
+
+**Limitations:** These were manual tests using fictional data, not a representative evaluation dataset. The generated reply still requires review for factual accuracy. No email-provider integration or automatic sending has been implemented.
 
 ### Task 3 — Meeting-to-Scope of Work
 
 **Live test date:** October 18, 2026
 
-**Test data:** A fictional meeting transcript about a directory website, listing publication, notification requirements, budget, delivery date, and acceptance criteria.
+**Test data:** A fictional meeting transcript about directory listings, editor review, publication, data ownership, budget, delivery date, and acceptance criteria.
 
-**Test environment:** Ollama with Qwen2.5 7B and the Knowledge Brain API running locally on port 8001.
+**Test environment:** Ollama with Qwen2.5 7B and the Knowledge Brain API on `http://127.0.0.1:8001`.
 
-**Observed result:** The live workflow returned a structured draft containing customer goals, requirements, deliverables, assumptions, risks, open questions, knowledge gaps, and source references. It correctly returned `requires_human_review: true`, `approved: false`, and `finalized: false`.
+**Observed results:** The live workflow generated a structured scope draft with customer goals, requirements, deliverables, scope boundaries, assumptions, risks, open questions, knowledge gaps, and source references. The focused test returned the relevant fictional directory-listing article. The response included `requires_human_review: true`, `approved: false`, and `finalized: false`.
 
-**Known limitations:** One live test does not establish the accuracy or completeness of generated scopes. Some unresolved decisions appeared under assumptions instead of only under open questions. Retrieval also included potentially irrelevant references. Human review remains mandatory.
+**Known limitations:** The generated draft placed unresolved budget, delivery date, and acceptance criteria under assumptions as well as open questions. These items need human clarification. The test used fictional data and does not establish real-world scope accuracy or production readiness.
+
 
 
 ## 6. Planned Knowledge Brain Retrieval Evaluation
