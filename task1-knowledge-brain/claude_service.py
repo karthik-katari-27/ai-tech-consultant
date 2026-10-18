@@ -5,7 +5,7 @@ import os
 from anthropic import Anthropic
 
 
-DEFAULT_MODEL = "claude-sonnet-5"
+DEFAULT_MODEL = "claude-sonnet-5-5"
 
 
 class ClaudeConfigurationError(RuntimeError):
