@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from meeting_to_scope import (
     MeetingToScopeError,
+    _enforce_transcript_constraints,
     generate_scope_of_work,
 )
 
@@ -196,6 +197,158 @@ class MeetingToScopeTests(unittest.TestCase):
                 "invalid 'requirements' field",
             ):
                 generate_scope_of_work("Discuss project requirements.")
+
+    def test_prompt_separates_assumptions_from_open_questions(self):
+        scope = self.sample_scope()
+        scope["assumptions"] = []
+        scope["open_questions"] = [
+            "What is the budget?",
+            "What is the delivery date?",
+            "What are the final acceptance criteria?",
+        ]
+
+        with (
+            patch(
+                "meeting_to_scope._search_knowledge_brain",
+                return_value={"results": []},
+            ),
+            patch(
+                "meeting_to_scope._ask_local_model",
+                return_value=json.dumps(scope),
+            ) as mock_model,
+        ):
+            result = generate_scope_of_work(
+                "The budget, delivery date, and acceptance criteria "
+                "are undecided."
+            )
+
+        prompt = mock_model.call_args.args[0]
+
+        self.assertIn(
+            "Put unresolved decisions, missing information",
+            prompt,
+        )
+        self.assertIn(
+            "Do not list the same unresolved issue under both assumptions",
+            prompt,
+        )
+        self.assertEqual(result["assumptions"], [])
+        self.assertIn(
+            "What is the budget?",
+            result["open_questions"],
+        )
+        self.assertIn(
+            "What is the delivery date?",
+            result["open_questions"],
+        )
+
+
+    def test_removes_unsupported_automation_claim(self):
+        scope = self.sample_scope()
+        scope["requirements"] = [
+            "The publication process should be automated."
+        ]
+
+        result = _enforce_transcript_constraints(
+            scope,
+            "Members need to create and publish directory listings.",
+        )
+
+        self.assertEqual(result["requirements"], [])
+        self.assertTrue(
+            any(
+                "automated or remain manual" in question
+                for question in result["open_questions"]
+            )
+        )
+
+    def test_moves_unverified_platform_assumption_to_question(self):
+        scope = self.sample_scope()
+        scope["assumptions"] = [
+            "The sample directory exists and is accessible for verification."
+        ]
+
+        result = _enforce_transcript_constraints(
+            scope,
+            "The customer wants published directory listings.",
+        )
+
+        self.assertEqual(result["assumptions"], [])
+        self.assertTrue(
+            any(
+                "sample directory" in question.lower()
+                and "confirmed" in question.lower()
+                for question in result["open_questions"]
+            )
+        )
+
+    def test_removes_dependencies_duplicated_by_open_questions(self):
+        scope = self.sample_scope()
+        scope["dependencies"] = [
+            "Budget and delivery date to be confirmed",
+            "Editor role availability",
+        ]
+        scope["open_questions"] = [
+            "What is the project budget?",
+            "What is the delivery date?",
+        ]
+
+        result = _enforce_transcript_constraints(
+            scope,
+            "The budget and delivery date have not been agreed.",
+        )
+
+        self.assertEqual(
+            result["dependencies"],
+            ["Editor role availability"],
+        )
+        self.assertEqual(
+            result["open_questions"],
+            [
+                "What is the project budget?",
+                "What is the delivery date?",
+            ],
+        )
+
+
+    def test_fictional_guide_assumptions_become_questions(self):
+        scope = self.sample_scope()
+        scope["assumptions"] = [
+            "Editor review process as described in the fictional guide",
+            "Verification process for listing appearance as described in the fictional guide",
+        ]
+        scope["knowledge_gaps"] = []
+
+        result = _enforce_transcript_constraints(
+            scope,
+            (
+                "Members need to create and publish directory listings. "
+                "The editor workflow and listing verification process "
+                "have not been confirmed."
+            ),
+        )
+
+        self.assertEqual(result["assumptions"], [])
+
+        self.assertTrue(
+            any(
+                "editor-review workflow" in question.lower()
+                for question in result["open_questions"]
+            )
+        )
+        self.assertTrue(
+            any(
+                "verified in the directory" in question.lower()
+                for question in result["open_questions"]
+            )
+        )
+        self.assertTrue(
+            any(
+                "fictional reference material" in gap.lower()
+                for gap in result["knowledge_gaps"]
+            )
+        )
+
 
 
 if __name__ == "__main__":
