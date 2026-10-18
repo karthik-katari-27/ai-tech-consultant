@@ -313,3 +313,105 @@ Add future entries whenever AI tools contribute significant code, design decisio
 
 
 For each entry, record the date, tool, task, proposed changes, human review, and actual test results where applicable. Keep the log factual and distinguish suggestions from implemented work.
+
+## 9. Activity 7 — Local Ollama Integration
+
+**Date:** October 18, 2026
+
+**Goal:** Add a local-model option for generating Knowledge Brain answers without requiring Anthropic API credits.
+
+**AI contribution:** ChatGPT guided the implementation of `local_ai_service.py`, the `/ask-local` endpoint, prompt construction, error handling, and automated tests. Diagnostic logging was also added to the Claude service.
+
+**Human verification:** The user ran the local service tests and the complete Task 1 test suite.
+
+**Reported results:**
+- Five local AI service tests passed.
+- The complete Task 1 suite passed 41 tests.
+- A live `/ask-local` request using Qwen2.5 7B through Ollama succeeded with fictional reference material.
+
+**Limitations:** The live test used a single question and fictional data. It does not establish general answer accuracy or production readiness.
+
+**Git checkpoint:** `b23d42c` — Add local Ollama-backed answer endpoint.
+
+## 10. Activity 8 — Inbox Agent Prototype
+
+**Date:** October 18, 2026
+
+**Goal:** Classify incoming support emails, retrieve potentially relevant Knowledge Brain articles, and prepare reply drafts for human review.
+
+**AI contribution:** ChatGPT guided the implementation of `task2-inbox-agent/inbox_agent.py`, its README, and `tests/test_inbox_agent.py`.
+
+The prototype classifies email intent, summarizes the request, assigns basic urgency, retrieves article results, prepares draft replies, and returns source details. It does not send emails automatically.
+
+**Human verification:** The user ran the dedicated Inbox Agent tests.
+
+**Reported result:** Five automated tests passed using mocked model and API responses.
+
+**Limitations:** Live end-to-end testing has not been recorded. The prototype has no email-provider integration and has not been evaluated on representative real-world emails.
+
+**Git checkpoint:** `2669daf` — Add human-reviewed Inbox Agent prototype.
+
+## 11. Activity 9 — Meeting-to-Scope of Work Prototype
+
+**Date:** October 18, 2026
+
+**Goal:** Generate structured draft scopes of work from meeting transcripts.
+
+**AI contribution:** ChatGPT guided the implementation of `task3-meeting-to-scope/meeting_to_scope.py`, its README, and `tests/test_meeting_to_scope.py`.
+
+The prototype extracts meeting summaries, customer goals, requirements, deliverables, scope boundaries, assumptions, dependencies, risks, open questions, and knowledge gaps. It includes source details and marks the output as pending human review.
+
+**Human verification:** The user ran the dedicated Meeting-to-Scope tests.
+
+**Reported result:** Five automated tests passed using mocked model and API responses.
+
+**Limitations:** Live end-to-end testing has not been recorded. The prototype has no meeting-platform integration and has not been evaluated against representative real-world scopes of work.
+
+**Git checkpoint:** `9c03a27` — Add human-reviewed meeting-to-scope prototype.
+
+## 12. Activity 10 — Repository Documentation and Publication
+
+**Date:** October 18, 2026
+
+**Goal:** Update repository documentation to describe all three prototypes and their current verification status.
+
+**AI contribution:** ChatGPT guided updates to the root `README.md`, `DESIGN.md`, and `EVALS.md`.
+
+**Human verification:** The user checked formatting, staged the intended files, committed the updates, and pushed them to the public GitHub repository.
+
+**Documentation commits:**
+- `9b834ec` — Update root README for all three AI projects.
+- `aeb6a89` — Update system design for all three prototypes.
+- `017ee62` — Update evaluation plan and test evidence.
+
+Repository: https://github.com/karthik-katari-27/ai-tech-consultant
+
+## 13. Activity 11 — Automated Test Summary
+
+**Date:** October 18, 2026
+
+The user ran the three test suites separately and reported the following results:
+
+| Project | Tests passed |
+|---|---:|
+| Task 1 — Knowledge Brain | 41 |
+| Task 2 — Inbox Agent | 5 |
+| Task 3 — Meeting-to-Scope of Work | 5 |
+| **Total across separate runs** | **51** |
+
+**Reported result:** All 51 tests passed across the three separate runs.
+
+**Limitations:** Task 2 and Task 3 tests use mocked model and API responses. Their passing results do not establish live end-to-end reliability, real-world model accuracy, or production readiness.
+
+## 14. Current Development Status
+
+As of October 18, 2026:
+
+- Task 1 has a tested article-search API, a Claude integration, and a locally tested Ollama answer endpoint.
+- Task 2 has an initial Inbox Agent prototype and five passing mocked tests.
+- Task 3 has an initial Meeting-to-Scope of Work prototype and five passing mocked tests.
+- The root README, system design, and evaluation documentation have been updated and pushed to GitHub.
+- Live end-to-end testing of Task 2 and Task 3 remains outstanding.
+- Real support-content ingestion, permission verification, representative evaluation datasets, and production security controls remain future work.
+
+Test counts reflect the results reported during development. Update this record when additional tests or evaluations are performed.
