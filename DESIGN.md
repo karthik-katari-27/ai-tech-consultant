@@ -1,449 +1,348 @@
-\# AI Tech Consultant — System Design
+# AI Tech Consultant — System Design
 
+## 1. Project Overview
 
+AI Tech Consultant is a three-part AI-assisted support and consulting prototype.
 
-\## 1. Project Overview
+The project contains three workflows:
 
+1. **Task 1 — Knowledge Brain:** Searches a local article dataset and returns relevant information with source references.
+2. **Task 2 — Inbox Agent:** Classifies customer emails, retrieves relevant knowledge, and prepares draft replies for human review.
+3. **Task 3 — Meeting-to-Scope of Work:** Analyzes meeting transcripts and prepares structured draft scopes of work for human review.
 
+The prototypes use Python and a local Ollama model for AI-assisted workflows. Task 1 also includes an optional integration with the Anthropic Claude API.
 
-AI Tech Consultant is a three-part project designed to help a technical support team retrieve product knowledge, respond to customer emails, and prepare statements of work from meeting transcripts.
+Human review remains mandatory for customer-facing replies and scopes of work.
 
+## 2. Current Implementation Status
 
+All three tasks have initial working prototypes and automated tests.
 
-The project is planned around three main tasks:
-
-
-
-1\. \*\*Task 1 — Knowledge Brain:\*\* Search approved support documentation and provide relevant information with source references.
-
-2\. \*\*Task 2 — Inbox Agent:\*\* Analyze incoming emails, retrieve relevant knowledge, and prepare response drafts for human review.
-
-3\. \*\*Task 3 — Meeting-to-Scope of Work:\*\* Analyze meeting transcripts and prepare draft scopes of work and proposals for human approval.
-
-
-
-The goal is to make support and consulting workflows more efficient while keeping humans responsible for reviewing important customer-facing outputs.
-
-
-
-\## 2. Current Implementation Status
-
-
-
-The current implementation is an initial version of Task 1.
-
-
+### Task 1 — Knowledge Brain
 
 Implemented components:
 
+- FastAPI application with `GET /health` and `POST /ask`.
+- Local JSON article loading and validation.
+- Keyword-based article search with higher scores for title matches.
+- Generic errors for unavailable or invalid article data.
+- Sitemap XML inspection and parsing utilities.
+- Claude integration through `POST /ask-claude`.
+- Local Ollama integration through `POST /ask-local`.
+- Automated API, article-loader, sitemap, and local-AI service tests.
+
+The latest reported complete test run passed 41 tests.
+
+### Task 2 — Inbox Agent
+
+Implemented components:
+
+- Email subject and body validation.
+- Email classification into configured categories.
+- Summary and basic urgency classification.
+- Knowledge Brain article retrieval.
+- Draft reply generation using Ollama.
+- Source references for human reviewers.
+- Explicit draft status and human-review fields.
+- Automated tests using mocked responses.
+
+The latest reported dedicated test run passed five tests.
+
+The prototype does not connect to an email provider and does not send emails automatically.
+
+### Task 3 — Meeting-to-Scope of Work
+
+Implemented components:
+
+- Meeting transcript validation.
+- Knowledge Brain article retrieval.
+- Structured scope generation using Ollama.
+- Extraction of customer goals, requirements, and deliverables.
+- In-scope and out-of-scope items.
+- Assumptions, dependencies, and risks.
+- Open questions and knowledge gaps.
+- Source references and source notices.
+- Validation of the model-generated JSON structure.
+- Explicit human-review and approval-status fields.
+- Automated tests using mocked responses.
+
+The latest reported dedicated test run passed five tests.
+
+The prototype is a Python module, not a standalone HTTP API or meeting-platform integration.
+
+### Verification Summary
+
+The latest reported test runs were:
+
+| Project | Tests passed | Verification |
+|---|---:|---|
+| Knowledge Brain | 41 | Automated test suite |
+| Inbox Agent | 5 | Dedicated automated tests |
+| Meeting-to-Scope of Work | 5 | Dedicated automated tests |
+| **Total** | **51** | **Separate test runs** |
+
+Task 2 and Task 3 tests use mocks for model and API responses. They do not prove that those workflows work end to end with live services.
+
+Task 1's `/ask-local` endpoint was also tested successfully with a live request using the local Qwen model and fictional reference data.
+
+## 3. Technology and Repository Structure
+
+The project uses:
+
+- Python
+- FastAPI for the Knowledge Brain HTTP API
+- Local JSON files for article storage
+- Ollama with the `qwen2.5:7b` model
+- The Anthropic API for optional Claude-based answers
+- Python's `unittest` framework for automated tests
+
+Current repository structure:
+
+```text
+ai-tech-consultant/
+├── shared-docs/
+├── task1-knowledge-brain/
+│   ├── data/
+│   ├── tests/
+│   ├── main.py
+│   ├── search_articles.py
+│   ├── inspect_sitemap.py
+│   ├── claude_service.py
+│   ├── local_ai_service.py
+│   ├── requirements.txt
+│   ├── requirements-dev.txt
+│   └── README.md
+├── task2-inbox-agent/
+│   ├── tests/
+│   ├── inbox_agent.py
+│   └── README.md
+├── task3-meeting-to-scope/
+│   ├── tests/
+│   ├── meeting_to_scope.py
+│   └── README.md
+├── AI_LOG.md
+├── DESIGN.md
+├── EVALS.md
+└── README.md
+```
 
+## 4. Task 1 Architecture — Knowledge Brain
 
-\- A FastAPI application with `GET /health` and `POST /ask`.
+### Request flow
 
-\- Local JSON-based article loading.
+1. A client sends a question to the FastAPI application.
+2. The API validates the input.
+3. The search module loads and validates the local JSON dataset.
+4. Keyword matching identifies potentially relevant articles.
+5. Matching title keywords receive more weight than text-only matches.
+6. Matching articles are returned with their source metadata.
+7. Responses identify the fictional nature of the sample data.
 
-\- Keyword-based article search with higher scores for title matches.
+### API endpoints
 
-\- Validation of article records.
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/health` | Check whether the API is responding |
+| POST | `/ask` | Search the local article dataset |
+| POST | `/ask-claude` | Generate an answer using the Claude service |
+| POST | `/ask-local` | Generate an answer using Ollama |
 
-\- Generic errors for unavailable or invalid article data.
+The `/ask` endpoint performs keyword-based retrieval. The AI answer endpoints use retrieved articles as reference material.
 
-\- A separate sitemap inspection and XML parsing utility.
+The Claude endpoint requires appropriate API configuration and available Anthropic API credits. The local endpoint uses the configured Ollama host and model.
 
-\- Automated tests for the API, sitemap parsing, and article loading and validation.
+### Article data model
 
-
-
-The current dataset contains three fictional test articles. It does not contain verified Brilliant Directories support content.
-
-
-
-The latest complete automated test run reported 20 passing tests.
-
-
-
-The Inbox Agent, Meeting-to-Scope of Work workflow, AI-powered retrieval, approved real-content ingestion, and production deployment are not yet implemented.
-
-
-
-\## 3. Current Task 1 Architecture
-
-
-
-The current request flow is:
-
-
-
-1\. A client sends a question to `POST /ask`.
-
-2\. FastAPI validates that the question is not empty.
-
-3\. The search module loads and validates the local JSON dataset.
-
-4\. The search module extracts keywords from the question and article fields.
-
-5\. Matching title keywords receive three points each, while matching text-only keywords receive one point each.
-
-6\. The highest-scoring matches are returned, up to the configured result limit.
-
-7\. The response clearly labels the results as fictional test data.
-
-
-
-If the question is empty, the API returns HTTP 400. If the article data cannot be loaded or validated, the API returns HTTP 503 with a generic error message.
-
-
-
-If no keywords match, the API returns an empty result list.
-
-
-
-\## 4. API Design
-
-
-
-\### Health endpoint
-
-
-
-\*\*Method:\*\* `GET`
-
-
-
-\*\*Path:\*\* `/health`
-
-
-
-Purpose: Confirm that the API process is responding.
-
-
-
-Example response:
-
-
-
-&#x20;   {
-
-&#x20;     "status": "healthy"
-
-&#x20;   }
-
-
-
-\### Question endpoint
-
-
-
-\*\*Method:\*\* `POST`
-
-
-
-\*\*Path:\*\* `/ask`
-
-
-
-Example request:
-
-
-
-&#x20;   {
-
-&#x20;     "question": "How do I publish a directory listing?"
-
-&#x20;   }
-
-
-
-The response includes the original question, the response type, a notice identifying the data as fictional, the number of matches, and the matching article records.
-
-
-
-The endpoint currently uses local keyword search. It does not call an AI model or retrieve verified support content.
-
-
-
-\## 5. Article Data Design
-
-
-
-Each article record must contain these five fields:
-
-
+Each article record uses five required fields:
 
 | Field | Purpose |
-
 |---|---|
-
 | `id` | Unique article identifier |
-
 | `title` | Article title |
-
 | `url` | Source or reference URL |
-
 | `text` | Article content |
+| `source_type` | Identifies the source-data type |
 
-| `source\_type` | Indicates the type of source data |
+The current sample dataset contains fictional test articles using `example.test` URLs and the `fictional_test_data` source label.
 
+### Sitemap utility
 
+The sitemap utility is separate from the question-answering API. Its tests cover ordinary sitemap URL lists, sitemap indexes, and malformed XML.
 
-All five fields must contain non-empty strings.
+Sitemap discovery does not establish permission to download, store, or reuse article content. Real-content ingestion has not been established as part of the current implementation.
 
+## 5. Task 2 Architecture — Inbox Agent
 
+The Inbox Agent is implemented in `task2-inbox-agent/inbox_agent.py`.
 
-The current sample records use fictional `example.test` URLs and the `fictional\_test\_data` source label.
+### Workflow
 
+1. Accept an email subject and body.
+2. Validate that the email contains usable text.
+3. Ask the local model to classify the email and summarize its intent.
+4. Validate the classification result and use an allowed category and urgency value.
+5. Submit the email content to the Knowledge Brain `/ask` endpoint.
+6. Retain up to three well-formed article results.
+7. Generate a reply draft grounded in the retrieved reference material.
+8. Return the classification, draft, source details, and human-review status.
 
+### Current categories
 
-\### Planned metadata for approved content
+The configured categories are:
 
+- `account_profile`
+- `listing_publishing`
+- `email_notifications`
+- `billing`
+- `technical_issue`
+- `other`
 
+The urgency field uses `low`, `normal`, or `high`.
 
-When approved real content becomes available, records should additionally track appropriate provenance metadata, such as:
+These classifications are model-generated and have not been evaluated on a representative real-world email dataset.
 
+### Output and review
 
+The returned result includes:
 
-\- Canonical source URL and retrieval time.
+- Email subject
+- Classification and summary
+- Draft reply
+- Source references
+- Source notice
+- `requires_human_review`
+- `sent`
 
-\- Source modification time, when available.
+The prototype marks the result as pending review and sets `sent` to `false`.
 
-\- Content hash for detecting changes.
+There is no email-provider integration or automatic message-sending implementation.
 
-\- Source type and permission status.
+## 6. Task 3 Architecture — Meeting-to-Scope of Work
 
-\- Content version or ingestion status.
+The workflow is implemented in `task3-meeting-to-scope/meeting_to_scope.py`.
 
+### Workflow
 
+1. Accept and validate a meeting transcript.
+2. Submit the transcript to the Knowledge Brain `/ask` endpoint.
+3. Retain up to five well-formed article results.
+4. Ask the local model to produce a structured JSON scope draft.
+5. Validate the JSON object and the expected list fields.
+6. Return the structured draft with available sources and review status.
 
-These additions are planned and are not part of the current five-field schema.
+### Scope fields
 
+The draft includes:
 
+- `meeting_summary`
+- `customer_goals`
+- `requirements`
+- `deliverables`
+- `in_scope`
+- `out_of_scope`
+- `assumptions`
+- `dependencies`
+- `risks`
+- `open_questions`
+- `knowledge_gaps`
 
-\## 6. Sitemap Discovery and Ingestion
+The output also includes source details, a source notice, `requires_human_review`, `approved`, and `finalized` fields.
 
+### Grounding and uncertainty
 
+The prompt instructs the model not to invent prices, dates, technical capabilities, or customer commitments.
 
-The sitemap utility is separate from the question-answering API.
+Missing information should be recorded as an open question or knowledge gap rather than treated as an agreed requirement.
 
+The returned status marks the scope as a draft pending human review. The prototype does not approve, finalize, or send a proposal.
 
+## 7. Testing Strategy
 
-It is intended to inspect sitemap XML, recognize supported sitemap structures, and identify candidate URLs within the configured hostname and URL restrictions.
+Each project's tests are run separately.
 
+### Task 1
 
+Run from the `task1-knowledge-brain` directory:
 
-Local tests cover ordinary sitemap URL lists, sitemap indexes, and malformed XML.
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
 
+The latest reported run passed 41 tests.
 
+### Task 2
 
-The utility has not been used to fetch real articles. Sitemap discovery alone does not establish permission to collect, store, redistribute, or use the discovered content in an AI system.
+Run from the repository root:
 
+```powershell
+.\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task2-inbox-agent\tests -p test_inbox_agent.py -v
+```
 
+The latest reported dedicated run passed five tests.
 
-Before real-content ingestion is implemented, the project must establish the applicable access permissions, reuse rights, attribution requirements, URL restrictions, and request limits.
+### Task 3
 
+Run from the repository root:
 
+```powershell
+.\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task3-meeting-to-scope\tests -p test_meeting_to_scope.py -v
+```
 
-Once permission is established, ingestion should be restricted to approved sources and should retain source provenance. The process should also support safe refreshes, change detection, and removal of content that is no longer approved.
+The latest reported dedicated run passed five tests.
 
+### Testing limitations
 
+The reported combined total of 51 passing tests represents separate test runs, not a single combined discovery run.
 
-\## 7. Planned Task 2 — Inbox Agent
+Task 2 and Task 3 tests mock the model and Knowledge Brain calls. Their results establish behavior under the tested mock scenarios, not live model accuracy or end-to-end reliability.
 
+Task 1's local AI endpoint has had a live test with fictional reference material. The Inbox Agent and Meeting-to-Scope workflows still require live end-to-end verification.
 
+## 8. Security, Permissions, and Human Oversight
 
-The planned Inbox Agent will:
+The project follows these design principles:
 
+- Keep credentials and environment-specific secrets out of source control.
+- Return generic API errors rather than exposing internal file paths or stack traces.
+- Treat incoming emails, meeting transcripts, and retrieved documents as untrusted input.
+- Avoid unsupported claims and invented product procedures.
+- Preserve source titles, URLs, and source-type labels.
+- Require human review for email drafts and scopes of work.
+- Obtain appropriate permissions before collecting or reusing third-party support content.
 
+The current sample articles are fictional test data, not verified Brilliant Directories support documentation.
 
-1\. Receive or read an incoming customer email through an approved integration.
+Authentication, authorization, production monitoring, request limits, secure deployment, and comprehensive security testing remain future work.
 
-2\. Classify the email's intent and identify the customer's issue.
+## 9. Current Limitations and Future Work
 
-3\. Query the Knowledge Brain API for relevant information.
+Current limitations include:
 
-4\. Prepare a draft response grounded in the retrieved information.
+- Keyword-based article retrieval rather than a production-grade semantic retrieval system.
+- A small fictional article dataset.
+- No real support-content ingestion with confirmed permissions.
+- No email-provider integration for Task 2.
+- No meeting-platform integration for Task 3.
+- No production deployment for the Inbox Agent or Meeting-to-Scope workflows.
+- No representative real-world evaluation dataset for Tasks 2 and 3.
+- No completed evaluation of retrieval quality or AI-generated output accuracy.
 
-5\. Include source references when supported by approved knowledge.
+Recommended future work:
 
-6\. Send the draft to a human for review and approval.
+1. Perform live end-to-end tests for Task 2 and Task 3 with fictional data.
+2. Add reviewed evaluation examples for email classification and scope extraction.
+3. Measure retrieval relevance and document the evaluation method.
+4. Evaluate grounding, source attribution, and unsupported claims.
+5. Add authentication, authorization, and secure deployment controls.
+6. Evaluate reliability, latency, and failure handling before production use.
 
-7\. Record review feedback for evaluation and future improvement.
+Evaluation claims should be recorded only after the relevant tests or measurements have actually been performed.
 
+## 10. Related Documentation
 
-
-Sending customer-facing messages automatically is not part of the initial human-review workflow.
-
-
-
-This task has not yet been implemented.
-
-
-
-\## 8. Planned Task 3 — Meeting-to-Scope of Work
-
-
-
-The planned workflow will:
-
-
-
-1\. Accept a meeting transcript.
-
-2\. Extract customer needs, requirements, assumptions, dependencies, and open questions.
-
-3\. Query the Knowledge Brain API for relevant approved product information.
-
-4\. Prepare a draft scope of work or proposal.
-
-5\. Highlight uncertainties, missing requirements, and assumptions.
-
-6\. Require human review and approval before the document is finalized or shared.
-
-
-
-This task has not yet been implemented.
-
-
-
-\## 9. Target System Architecture
-
-
-
-The intended high-level architecture is:
-
-
-
-&#x20;   Incoming support documentation
-
-&#x20;               |
-
-&#x20;               v
-
-&#x20;      Approved ingestion process
-
-&#x20;               |
-
-&#x20;               v
-
-&#x20;       Knowledge Brain storage
-
-&#x20;               |
-
-&#x20;               v
-
-&#x20;      Knowledge Brain API
-
-&#x20;          /          \\
-
-&#x20;         v            v
-
-&#x20;    Inbox Agent   Meeting-to-SOW
-
-&#x20;         |            |
-
-&#x20;         v            v
-
-&#x20;    Draft reply   Draft proposal
-
-&#x20;         |            |
-
-&#x20;         v            v
-
-&#x20;    Human review  Human review
-
-
-
-The current implementation only covers the early local-data and API portions of Task 1.
-
-
-
-Persistent storage, approved content ingestion, AI-powered retrieval, the Inbox Agent, the Meeting-to-Scope of Work workflow, and integrations remain future work.
-
-
-
-\## 10. Reliability and Testing
-
-
-
-The current test suite covers:
-
-
-
-\- API health and question handling.
-
-\- Matching and unmatched questions.
-
-\- Empty-input validation and error responses.
-
-\- Fictional-source labelling.
-
-\- Sitemap XML parsing.
-
-\- Article loading and invalid-data handling.
-
-
-
-The latest complete test run reported 20 passing tests.
-
-
-
-Future development should add tests for approved-content ingestion, source attribution, retrieval quality, content refresh and deletion, and the end-to-end behavior of the Inbox Agent and Meeting-to-Scope of Work workflow.
-
-
-
-Evaluation results must be based on tests that were actually run. Expected behavior must not be reported as a measured result.
-
-
-
-\## 11. Security, Permissions, and Human Oversight
-
-
-
-The project must follow these principles:
-
-
-
-\- Do not ingest real support articles until collection and reuse permissions have been clarified.
-
-\- Do not expose internal file paths, stack traces, or sensitive configuration in API error responses.
-
-\- Keep credentials and environment-specific secrets out of version control.
-
-\- Restrict ingestion to approved sources and URLs.
-
-\- Keep source references associated with retrieved content.
-
-\- Identify missing evidence and uncertainty rather than inventing answers.
-
-\- Require human approval for customer-facing replies and proposed scopes of work.
-
-\- Preserve a record of significant human corrections and evaluation results where appropriate.
-
-
-
-Authentication, authorization, request limits, production monitoring, and secure deployment must be designed before exposing the service to untrusted clients.
-
-
-
-\## 12. Implementation Roadmap
-
-
-
-1\. Maintain the working Task 1 baseline and its automated tests.
-
-2\. Confirm permission to use real support content.
-
-3\. Build and test a small ingestion workflow using approved sources.
-
-4\. Improve retrieval quality and add source attribution.
-
-5\. Add evaluation cases for answer relevance, grounding, and unsupported answers.
-
-6\. Build the Inbox Agent with human-reviewed draft replies.
-
-7\. Build the Meeting-to-Scope of Work workflow with human approval.
-
-8\. Complete end-to-end evaluation, security review, documentation, and demo preparation.
-
-
-
-Each milestone should be tested and documented before the next major integration is introduced.
+- `README.md` — repository overview and setup instructions.
+- `task1-knowledge-brain/README.md` — Knowledge Brain setup and API usage.
+- `task2-inbox-agent/README.md` — Inbox Agent behavior and tests.
+- `task3-meeting-to-scope/README.md` — Meeting-to-Scope workflow and tests.
+- `EVALS.md` — evaluation plans, criteria, and result-recording guidance.
+- `AI_LOG.md` — AI-assisted development activities and reported verification results.
