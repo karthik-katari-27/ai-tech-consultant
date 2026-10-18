@@ -1,5 +1,5 @@
 """Automated tests for the local Knowledge Brain FastAPI application."""
-
+from local_ai_service import LocalAIServiceError
 import unittest
 from unittest.mock import patch
 
@@ -294,6 +294,155 @@ class AskClaudeEndpointTests(unittest.TestCase):
             response.json()["detail"],
         )
         mock_claude.assert_not_called()
+
+class AskLocalEndpointTests(unittest.TestCase):
+    """Test /ask-local without calling a real Ollama server."""
+
+    def setUp(self):
+        self.client = TestClient(main.app)
+
+    def sample_articles(self):
+        return [
+            {
+                "id": "fictional-directory-listing",
+                "title": "Fictional Guide: Publishing a Directory Listing",
+                "url": "https://example.test/support/publish-listing",
+                "text": (
+                    "This is fictional test data. An editor reviews a "
+                    "draft listing, chooses Publish, and verifies that "
+                    "it appears in a sample directory."
+                ),
+                "source_type": "fictional_test_data",
+                "score": 5,
+            }
+        ]
+
+    def test_success_returns_answer_and_sources(self):
+        articles = self.sample_articles()
+        question = "How do I publish a directory listing?"
+        answer = (
+            "Review the draft, choose Publish, and verify the listing."
+        )
+
+        with (
+            patch("main.search_articles", return_value=articles),
+            patch(
+                "main.ask_local_model",
+                return_value=answer,
+            ) as mock_local_ai,
+        ):
+            response = self.client.post(
+                "/ask-local",
+                json={"question": question},
+            )
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertEqual(data["answer"], answer)
+        self.assertEqual(data["question"], question)
+        self.assertEqual(
+            data["response_type"],
+            "local_ai_answer_with_fictional_context",
+        )
+        self.assertIn("not verified", data["source_notice"])
+        self.assertEqual(
+            data["sources"],
+            [
+                {
+                    "title": (
+                        "Fictional Guide: Publishing a Directory Listing"
+                    ),
+                    "url": "https://example.test/support/publish-listing",
+                    "source_type": "fictional_test_data",
+                }
+            ],
+        )
+
+        mock_local_ai.assert_called_once_with(
+            question,
+            articles=articles,
+        )
+
+    def test_blank_question_returns_400(self):
+        with (
+            patch("main.search_articles") as mock_search,
+            patch("main.ask_local_model") as mock_local_ai,
+        ):
+            response = self.client.post(
+                "/ask-local",
+                json={"question": "   "},
+            )
+
+        self.assertEqual(response.status_code, 400)
+        mock_search.assert_not_called()
+        mock_local_ai.assert_not_called()
+
+    def test_no_matching_articles_skips_local_model(self):
+        with (
+            patch("main.search_articles", return_value=[]),
+            patch("main.ask_local_model") as mock_local_ai,
+        ):
+            response = self.client.post(
+                "/ask-local",
+                json={"question": "unrelated topic"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertEqual(
+            data["response_type"],
+            "no_matching_reference_articles",
+        )
+        self.assertEqual(data["sources"], [])
+        mock_local_ai.assert_not_called()
+
+    def test_local_service_failure_returns_502(self):
+        with (
+            patch(
+                "main.search_articles",
+                return_value=self.sample_articles(),
+            ),
+            patch(
+                "main.ask_local_model",
+                side_effect=LocalAIServiceError(
+                    "Internal diagnostic detail."
+                ),
+            ),
+        ):
+            response = self.client.post(
+                "/ask-local",
+                json={"question": "How do I publish a directory listing?"},
+            )
+
+        self.assertEqual(response.status_code, 502)
+        self.assertNotIn(
+            "Internal diagnostic detail",
+            response.json()["detail"],
+        )
+
+    def test_article_data_error_returns_503(self):
+        with (
+            patch(
+                "main.search_articles",
+                side_effect=ArticleDataError(
+                    "Internal article data detail."
+                ),
+            ),
+            patch("main.ask_local_model") as mock_local_ai,
+        ):
+            response = self.client.post(
+                "/ask-local",
+                json={"question": "How do I publish a listing?"},
+            )
+
+        self.assertEqual(response.status_code, 503)
+        self.assertNotIn(
+            "Internal article data detail",
+            response.json()["detail"],
+        )
+        mock_local_ai.assert_not_called()
 
 
 if __name__ == "__main__":

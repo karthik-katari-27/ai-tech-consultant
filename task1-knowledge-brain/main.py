@@ -1,4 +1,6 @@
 """Minimal FastAPI service for the Knowledge Brain milestone."""
+from local_ai_service import LocalAIServiceError, ask_local_model
+
 from claude_service import (
     ClaudeConfigurationError,
     ClaudeServiceError,
@@ -108,6 +110,68 @@ def ask_with_claude(request: AskRequest) -> dict[str, object]:
 
     return {
         "response_type": "claude_answer_with_fictional_context",
+        "source_notice": (
+            "The reference articles are fictional test data and are not "
+            "verified Brilliant Directories support content."
+        ),
+        "question": question,
+        "answer": answer,
+        "sources": [
+            {
+                "title": article["title"],
+                "url": article["url"],
+                "source_type": article["source_type"],
+            }
+            for article in articles
+        ],
+    }
+
+@app.post("/ask-local")
+def ask_with_local_model(request: AskRequest) -> dict[str, object]:
+    """Answer using Ollama and matching fictional reference articles."""
+
+    question = request.question.strip()
+
+    if not question:
+        raise HTTPException(
+            status_code=400,
+            detail="Question must not be empty.",
+        )
+
+    try:
+        articles = search_articles(question)
+    except ArticleDataError as error:
+        raise HTTPException(
+            status_code=503,
+            detail="Article search is temporarily unavailable. Please try again later.",
+        ) from error
+
+    if not articles:
+        return {
+            "response_type": "no_matching_reference_articles",
+            "source_notice": (
+                "The local dataset contains fictional test data, "
+                "not verified support documentation."
+            ),
+            "question": question,
+            "answer": (
+                "No matching reference articles were found. "
+                "A reliable answer cannot be provided from the "
+                "available reference material."
+            ),
+            "sources": [],
+        }
+
+    try:
+        answer = ask_local_model(question, articles=articles)
+    except LocalAIServiceError as error:
+        raise HTTPException(
+            status_code=502,
+            detail="Local AI service is temporarily unavailable. Please try again later.",
+        ) from error
+
+    return {
+        "response_type": "local_ai_answer_with_fictional_context",
         "source_notice": (
             "The reference articles are fictional test data and are not "
             "verified Brilliant Directories support content."

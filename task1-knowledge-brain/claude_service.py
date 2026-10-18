@@ -1,6 +1,6 @@
 
 """Claude service for answering questions using retrieved article context."""
-
+import logging
 import os
 from typing import Any
 
@@ -9,6 +9,7 @@ from anthropic import Anthropic
 
 DEFAULT_MODEL = "claude-sonnet-5-5"
 
+logger = logging.getLogger(__name__)
 
 class ClaudeConfigurationError(RuntimeError):
     """Raised when Claude cannot be configured safely."""
@@ -86,7 +87,14 @@ def ask_claude(
                 }
             ],
         )
+
     except Exception as error:
+        logger.error(
+            "Claude API request failed: %s; HTTP status: %s; detail: %s",
+            type(error).__name__,
+            getattr(error, "status_code", "unknown"),
+            getattr(error, "message", str(error)),
+        )
         raise ClaudeServiceError(
             "Claude service request failed."
         ) from error
