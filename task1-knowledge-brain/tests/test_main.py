@@ -6,6 +6,8 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from main import app
+import main
+from claude_service import ClaudeConfigurationError, ClaudeServiceError
 from search_articles import ArticleDataError
 
 
@@ -134,6 +136,164 @@ class KnowledgeBrainApiTests(unittest.TestCase):
 
         for article in body["results"]:
             self.assertEqual(article["source_type"], "fictional_test_data")
+
+
+class AskClaudeEndpointTests(unittest.TestCase):
+    """Test /ask-claude without making live API requests."""
+
+    def setUp(self):
+        self.client = TestClient(main.app)
+
+    def sample_articles(self):
+        return [
+            {
+                "id": "test-article-1",
+                "title": "Fictional Profile Guide",
+                "url": "https://example.test/profile-guide",
+                "text": "This is fictional profile guidance.",
+                "source_type": "fictional_test_data",
+                "score": 3,
+            }
+        ]
+
+    def test_success_returns_answer_and_sources(self):
+        articles = self.sample_articles()
+        question = "How do I update my profile?"
+        answer = "The fictional reference describes profile updates."
+
+        with (
+            patch("main.search_articles", return_value=articles),
+            patch("main.ask_claude", return_value=answer) as mock_claude,
+        ):
+            response = self.client.post(
+                "/ask-claude",
+                json={"question": question},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["answer"], answer)
+        self.assertEqual(data["question"], question)
+        self.assertEqual(
+            data["response_type"],
+            "claude_answer_with_fictional_context",
+        )
+        self.assertIn("not verified", data["source_notice"])
+        self.assertEqual(
+            data["sources"],
+            [
+                {
+                    "title": "Fictional Profile Guide",
+                    "url": "https://example.test/profile-guide",
+                    "source_type": "fictional_test_data",
+                }
+            ],
+        )
+        mock_claude.assert_called_once_with(
+            question,
+            articles=articles,
+        )
+
+    def test_blank_question_returns_400(self):
+        with (
+            patch("main.search_articles") as mock_search,
+            patch("main.ask_claude") as mock_claude,
+        ):
+            response = self.client.post(
+                "/ask-claude",
+                json={"question": "   "},
+            )
+
+        self.assertEqual(response.status_code, 400)
+        mock_search.assert_not_called()
+        mock_claude.assert_not_called()
+
+    def test_no_matching_articles_skips_claude(self):
+        with (
+            patch("main.search_articles", return_value=[]),
+            patch("main.ask_claude") as mock_claude,
+        ):
+            response = self.client.post(
+                "/ask-claude",
+                json={"question": "unrelated topic"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(
+            data["response_type"],
+            "no_matching_reference_articles",
+        )
+        self.assertEqual(data["sources"], [])
+        mock_claude.assert_not_called()
+
+    def test_missing_claude_configuration_returns_503(self):
+        with (
+            patch(
+                "main.search_articles",
+                return_value=self.sample_articles(),
+            ),
+            patch(
+                "main.ask_claude",
+                side_effect=ClaudeConfigurationError(
+                    "ANTHROPIC_API_KEY is not configured."
+                ),
+            ),
+        ):
+            response = self.client.post(
+                "/ask-claude",
+                json={"question": "How do I update my profile?"},
+            )
+
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("not configured", response.json()["detail"])
+        self.assertNotIn("ANTHROPIC_API_KEY", response.json()["detail"])
+
+    def test_claude_failure_returns_502(self):
+        with (
+            patch(
+                "main.search_articles",
+                return_value=self.sample_articles(),
+            ),
+            patch(
+                "main.ask_claude",
+                side_effect=ClaudeServiceError(
+                    "Internal diagnostic detail."
+                ),
+            ),
+        ):
+            response = self.client.post(
+                "/ask-claude",
+                json={"question": "How do I update my profile?"},
+            )
+
+        self.assertEqual(response.status_code, 502)
+        self.assertNotIn(
+            "Internal diagnostic detail",
+            response.json()["detail"],
+        )
+
+    def test_article_data_error_returns_503(self):
+        with (
+            patch(
+                "main.search_articles",
+                side_effect=ArticleDataError(
+                    "Internal article data detail."
+                ),
+            ),
+            patch("main.ask_claude") as mock_claude,
+        ):
+            response = self.client.post(
+                "/ask-claude",
+                json={"question": "How do I update my profile?"},
+            )
+
+        self.assertEqual(response.status_code, 503)
+        self.assertNotIn(
+            "Internal article data detail",
+            response.json()["detail"],
+        )
+        mock_claude.assert_not_called()
 
 
 if __name__ == "__main__":
