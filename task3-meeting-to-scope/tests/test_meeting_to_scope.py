@@ -99,6 +99,8 @@ class MeetingToScopeTests(unittest.TestCase):
             prompt,
         )
         self.assertIn("Do not invent prices", prompt)
+        self.assertIn("feature-specific verification gap", prompt)
+        self.assertIn("notification triggers", prompt)
 
         self.assertEqual(
             result["status"],
@@ -349,7 +351,197 @@ class MeetingToScopeTests(unittest.TestCase):
             )
         )
 
+    def test_adds_question_when_approval_details_are_missing(self):
+        scope = self.sample_scope()
+        scope["open_questions"] = []
 
+        result = _enforce_transcript_constraints(
+            scope,
+            (
+                "The team wants editors to review listings before publication. "
+                "Please ask what review rules and approvals are needed."
+            ),
+        )
+
+        self.assertIn(
+            "What approval rules apply, and who can approve publication?",
+            result["open_questions"],
+        )
+
+    def test_adds_questions_for_missing_scope_document_and_baseline(self):
+        scope = self.sample_scope()
+        scope["open_questions"] = []
+
+        result = _enforce_transcript_constraints(
+            scope,
+            (
+                "The earlier scope document was not provided. "
+                "Do not claim that a baseline comparison has been completed."
+            ),
+        )
+
+        self.assertIn(
+            "Please provide the earlier scope document for comparison.",
+            result["open_questions"],
+        )
+        self.assertIn(
+            "What approved baseline or previous scope should be used for comparison?",
+            result["open_questions"],
+        )
+
+    def test_adds_notification_trigger_question_when_unspecified(self):
+        scope = self.sample_scope()
+        scope["open_questions"] = []
+
+        result = _enforce_transcript_constraints(
+            scope,
+            "Email notifications are required, but their triggers are unspecified.",
+        )
+
+        self.assertIn(
+            "Which notification triggers are required?",
+            result["open_questions"],
+        )
+
+    def test_preserves_explicitly_confirmed_notification_trigger(self):
+        scope = self.sample_scope()
+        scope["open_questions"] = []
+
+        result = _enforce_transcript_constraints(
+            scope,
+            "Send email notifications only when an editor approves a listing.",
+        )
+
+        self.assertEqual(result["open_questions"], [])
+
+    def test_unconfirmed_capability_assumptions_become_questions_and_gaps(self):
+        cases = (
+            (
+                "The platform allows bulk publication.",
+                "We have not confirmed whether the platform allows bulk publication.",
+            ),
+            (
+                "The platform can roll back publications.",
+                "The platform rollback capability is unverified.",
+            ),
+            (
+                "The platform supports multilingual listings.",
+                "We have not confirmed whether the platform supports multilingual listings.",
+            ),
+        )
+
+        for assumption, transcript in cases:
+            with self.subTest(assumption=assumption):
+                scope = self.sample_scope()
+                scope["assumptions"] = [assumption]
+                scope["knowledge_gaps"] = []
+
+                result = _enforce_transcript_constraints(scope, transcript)
+
+                self.assertEqual(result["assumptions"], [])
+                self.assertTrue(
+                    any(
+                        "can this assumption be confirmed" in question.lower()
+                        for question in result["open_questions"]
+                    )
+                )
+                self.assertTrue(
+                    any(
+                        assumption.rstrip(".").lower() in gap.lower()
+                        for gap in result["knowledge_gaps"]
+                    )
+                )
+
+    def test_preserves_explicitly_confirmed_platform_capabilities(self):
+        cases = (
+            (
+                "The platform allows bulk publication.",
+                "The platform allows bulk publication.",
+            ),
+            (
+                "The platform can roll back publications.",
+                "The platform can roll back publications.",
+            ),
+            (
+                "The platform supports multilingual listings.",
+                "The platform supports multilingual listings.",
+            ),
+        )
+
+        for assumption, transcript in cases:
+            with self.subTest(assumption=assumption):
+                scope = self.sample_scope()
+                scope["assumptions"] = [assumption]
+                scope["knowledge_gaps"] = []
+
+                result = _enforce_transcript_constraints(scope, transcript)
+
+                self.assertEqual(result["assumptions"], [assumption])
+                self.assertEqual(result["knowledge_gaps"], [])
+
+    def test_adds_specific_gap_for_explicitly_unverified_capability(self):
+        scope = self.sample_scope()
+        scope["assumptions"] = []
+        scope["knowledge_gaps"] = []
+
+        result = _enforce_transcript_constraints(
+            scope,
+            (
+                "We have not established whether the current platform supports "
+                "multilingual listings."
+            ),
+        )
+
+        self.assertTrue(
+            any(
+                "supports multilingual listings" in gap.lower()
+                and "not been verified" in gap.lower()
+                for gap in result["knowledge_gaps"]
+            )
+        )
+
+
+    def test_records_missing_crm_integration_details_as_knowledge_gaps(self):
+        scope = self.sample_scope()
+        scope["assumptions"] = []
+        scope["knowledge_gaps"] = []
+
+        result = _enforce_transcript_constraints(
+            scope,
+            (
+                "The customer wants directory listing changes synchronized "
+                "with their external CRM. No API documentation, credentials, "
+                "integration architecture, or platform compatibility "
+                "information has been provided."
+            ),
+        )
+
+        gaps = " ".join(result["knowledge_gaps"]).casefold()
+
+        self.assertIn("crm", gaps)
+        self.assertIn("api documentation", gaps)
+        self.assertIn("platform compatibility", gaps)
+
+    def test_records_unknown_data_migration_feasibility_as_knowledge_gap(self):
+        scope = self.sample_scope()
+        scope["assumptions"] = []
+        scope["knowledge_gaps"] = []
+
+        result = _enforce_transcript_constraints(
+            scope,
+            (
+                "The customer wants to migrate existing business listings "
+                "into the new workflow. The feasibility and details of the "
+                "data, including format, count, quality, duplicates, and "
+                "migration date, are unknown. Do not assume migration is "
+                "feasible until data inspection is complete."
+            ),
+        )
+
+        gaps = " ".join(result["knowledge_gaps"]).casefold()
+
+        self.assertIn("migration", gaps)
+        self.assertIn("feasibility", gaps)
 
 if __name__ == "__main__":
     unittest.main()
