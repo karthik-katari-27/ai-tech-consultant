@@ -36,7 +36,8 @@ Run from the repository root:
 .\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task3-meeting-to-scope\tests -p test_meeting_to_scope.py -v
 ```
 
-**Latest verified results:** Task 1 passed 46 tests on October 19, 2026. Previously reported runs passed 5 Task 2 tests and 10 Task 3 tests on October 18, 2026. These are separate runs, not one combined test run; Task 2 and Task 3 should be rerun to reconfirm their current status.
+**Latest recorded test results:** Task 1 passed 46 tests on October 19, 2026; Task 2 passed 6 tests on October 19, 2026; Task 3 previously passed 10 tests on October 18, 2026. These are separate test runs, not one combined test run. Task 3 should be rerun to reconfirm its current status.
+
 
 ## Knowledge Brain Retrieval Evaluation
 
@@ -49,6 +50,12 @@ Dataset: `task1-knowledge-brain/evaluation/knowledge_brain_cases.json`
 Reports: `task1-knowledge-brain/evaluation/knowledge_brain_eval_results.json` and `knowledge_brain_eval_results.csv`.
 
 These results do not establish accuracy on real support-center content.
+
+
+## Inbox Agent Classification Evaluation
+
+A 50-case fictional email benchmark using Qwen2.5 7B achieved 100% category accuracy (50/50), 80% urgency accuracy (40/50), and 80% exact-case accuracy (40/50) in the latest recorded run. All model calls succeeded. Average classification time was 8.80 seconds and median time was 7.24 seconds. Results are from a hand-authored dataset used during prompt tuning; real-world accuracy has not been established. See `task2-inbox-agent/README.md` and `EVALS.md` for details.
+
 
 ## Limitations and Safety
 

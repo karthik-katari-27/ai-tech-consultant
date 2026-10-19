@@ -31,18 +31,21 @@ The evaluation process should:
 
 The latest Task 1 automated test run passed all 46 tests in the Knowledge Brain test directory on October 19, 2026. This run includes regression tests for supported paraphrases, unsupported questions, and multiple-topic retrieval.
 
+
 | Project | Tests passed | Test approach and status |
 |---|---:|---|
 | Task 1 — Knowledge Brain | 46 | Latest verified unit-test run |
-| Task 2 — Inbox Agent | 5 | Previously reported run using mocked model and Knowledge Brain responses |
+| Task 2 — Inbox Agent | 6 | Latest verified unit-test run; includes Markdown-fenced JSON regression coverage |
 | Task 3 — Meeting-to-Scope of Work | 10 | Previously reported run using mocked model and Knowledge Brain responses |
-| **Total recorded across separate runs** | **61** | Individually reported results, not one combined test run |
+| **Total recorded across separate runs** | **62** | Results from separate test runs, not one combined run |
 
-The Task 2 and Task 3 results were reported on October 18, 2026, and were not rerun during the latest Task 1 evaluation. Their current status should be reconfirmed by rerunning those suites.
 
-Passing unit tests does not establish production readiness or real-world AI accuracy. The Task 2 and Task 3 tests use mocked responses and do not establish live end-to-end reliability.
+The Task 1 and Task 2 results were verified on October 19, 2026. The Task 3 result was previously reported on October 18, 2026, and was not rerun during the latest evaluations.
 
-The latest Task 1 run and the previous Task 2 and Task 3 runs were executed as separate test suites, not as one combined test-discovery command.
+Passing unit tests does not establish production readiness or real-world AI accuracy. The Task 2 and Task 3 unit tests use mocked model and API responses and do not establish live end-to-end reliability.
+
+The recorded results come from separate test suites, not one combined test-discovery command.
+
 
 
 ## 4. Reproducing the Automated Tests
@@ -63,7 +66,7 @@ Reported result: 46 tests passed in the latest Task 1 test run on October 19, 20
 .\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task2-inbox-agent\tests -p test_inbox_agent.py -v
 ```
 
-Reported result: 5 tests passed.
+Reported result: 6 tests passed in the latest Task 2 test run on October 19, 2026.
 
 The tests cover email validation, classification parsing, draft generation, source references, handling of missing article results, and human-review status.
 
@@ -206,23 +209,58 @@ Use manually reviewed examples with expected source documents and documented cor
 
 Grounding and citation accuracy results must not be reported until the relevant evaluation has been performed.
 
-## 8. Planned Inbox Agent Evaluation
 
-Evaluate the Inbox Agent using a reviewed dataset of representative email examples.
+## 8. Inbox Agent Classification Evaluation
 
-Measure or review:
+### Evaluation setup
 
-- Email classification accuracy.
-- Correct identification of customer intent.
-- Relevance of retrieved knowledge.
-- Factual accuracy and completeness of draft replies.
-- Correct use of source references.
-- Handling of ambiguous, sensitive, or unsupported requests.
-- Correct routing of drafts for human review rather than automatic sending.
+A 50-case classification benchmark was run on October 19, 2026, using the local Ollama model `qwen2.5:7b`.
 
-Record the evaluation method, sample size, results, and known limitations.
+The dataset is located at:
 
-The current five automated tests are functional tests using mocked responses, not an email classification benchmark. Classification accuracy has not been measured.
+`task2-inbox-agent/evaluation/inbox_email_cases.json`
+
+It contains fictional customer emails and expected labels for six email categories and three urgency levels. No real customer data was used.
+
+The evaluation runner calls `classify_email()` for each email, compares the model's predicted category and urgency against the expected labels, records response latency, and saves per-case results.
+
+### Final recorded results
+
+| Metric | Result |
+|---|---:|
+| Email cases | 50 |
+| Successful model calls | 50/50 |
+| Category accuracy | 50/50 (100%) |
+| Urgency accuracy | 40/50 (80%) |
+| Category and urgency both correct | 40/50 (80%) |
+| Average classification latency | 8,797.94 ms |
+| Median classification latency | 7,236.28 ms |
+
+The final recorded run classified all 50 categories correctly. Ten cases had incorrect urgency predictions. Urgency classification remains the main observed weakness.
+
+### Reproduction
+
+From the repository root, with Ollama running and the configured model available, run:
+
+```powershell
+.\task1-knowledge-brain\.venv\Scripts\python.exe .\task2-inbox-agent\evaluation\run_inbox_eval.py
+```
+
+The runner generates:
+
+- `task2-inbox-agent/evaluation/inbox_eval_results.json`
+- `task2-inbox-agent/evaluation/inbox_eval_results.csv`
+
+### Observations and limitations
+
+The model sometimes returned valid classification JSON surrounded by Markdown code fences. The classifier was updated to accept both plain JSON and fenced JSON, and a regression test was added. After this fix, the final recorded benchmark run completed all 50 model calls without classification parsing errors.
+
+Prompt tuning produced variable results across repeated runs. The final recorded run achieved 100% category accuracy and 80% urgency accuracy, but these results apply only to the hand-authored fictional dataset. The expected labels have not been independently validated, and the same dataset was used during prompt tuning.
+
+The urgency labels for some routine requests may be open to interpretation. A consistent, human-reviewed labeling rubric and a separate held-out dataset are needed before making claims about generalization. The evaluation does not measure reply quality, citation correctness, Knowledge Brain integration quality, or real-world email classification accuracy.
+
+The current automated tests use mocked model and API responses. Classification accuracy on representative real customer emails has not been established.
+
 
 ## 9. Planned Meeting-to-Scope of Work Evaluation
 

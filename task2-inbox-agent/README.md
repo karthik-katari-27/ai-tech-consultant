@@ -54,7 +54,35 @@ From the `ai-tech-consultant` repository root, run:
 .\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task2-inbox-agent\tests -p "test_inbox_agent.py" -v
 ```
 
-The Inbox Agent currently has five automated tests. These mock model and API calls, so the test run does not send emails or make live AI requests.
+The Inbox Agent currently has six automated tests. These mock model and API calls, so the test run does not send emails or make live AI requests. The tests include regression coverage for model responses wrapped in Markdown JSON code fences.
+
+
+## Classification Evaluation
+
+A 50-case classification benchmark was run on October 19, 2026, using the local Ollama model `qwen2.5:7b`. The dataset contains fictional customer emails and expected category and urgency labels.
+
+**Latest recorded results:**
+
+| Metric | Result |
+|---|---:|
+| Email cases | 50 |
+| Successful model calls | 50/50 |
+| Category accuracy | 50/50 (100%) |
+| Urgency accuracy | 40/50 (80%) |
+| Category and urgency both correct | 40/50 (80%) |
+| Average classification time | 8.80 seconds |
+| Median classification time | 7.24 seconds |
+
+The evaluation dataset is stored at `evaluation/inbox_email_cases.json`. Run the benchmark from the repository root with Ollama running and the configured model available:
+
+```powershell
+.\task1-knowledge-brain\.venv\Scripts\python.exe .\task2-inbox-agent\evaluation\run_inbox_eval.py
+```
+
+The runner produces `evaluation/inbox_eval_results.json` and `evaluation/inbox_eval_results.csv`.
+
+These measurements describe one run on a hand-authored fictional benchmark. The expected labels have not been independently validated, and the dataset was used during prompt tuning. The results therefore do not establish generalization to unseen emails or real-world classification accuracy. Urgency labeling still needs improvement and consistent human-reviewed criteria.
+
 
 ## Current Limitations
 
@@ -62,5 +90,5 @@ The Inbox Agent currently has five automated tests. These mock model and API cal
 - Emails must be supplied directly to the Python functions.
 - Classification and draft generation depend on local model output.
 - Retrieval uses the existing keyword-based Knowledge Brain.
-- The workflow has not been evaluated on a representative real-world email dataset.
+- The workflow has been evaluated on a 50-case fictional benchmark, but not on an independent, representative real-world email dataset.
 - Human review remains mandatory.

@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from inbox_agent import (
     InboxAgentError,
+    _parse_classification,
     classify_email,
     process_email,
 )
@@ -162,6 +163,27 @@ class InboxAgentTests(unittest.TestCase):
         self.assertTrue(result["requires_human_review"])
         self.assertFalse(result["sent"])
         mock_model.assert_called_once()
+
+
+    def test_classification_accepts_json_in_markdown_fences(self):
+        """Valid JSON wrapped in Markdown code fences is accepted."""
+
+        model_response = (
+            '```json\n'
+            '{\n'
+            '  "category": "account_profile",\n'
+            '  "summary": "The customer wants to update their profile.",\n'
+            '  "urgency": "low"\n'
+            '}\n'
+            '```'
+        )
+
+        result = _parse_classification(model_response)
+
+        self.assertEqual(result["category"], "account_profile")
+        self.assertEqual(result["summary"], "The customer wants to update their profile.")
+        self.assertEqual(result["urgency"], "low")
+
 
     def test_invalid_classification_json_is_rejected(self):
         with patch(

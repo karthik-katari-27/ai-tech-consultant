@@ -46,7 +46,7 @@ Implemented components:
 - Explicit draft status and human-review fields.
 - Automated tests using mocked responses.
 
-The latest reported dedicated test run passed five tests.
+The latest dedicated test run passed six tests on October 19, 2026, including regression coverage for Markdown-fenced JSON classification responses.
 
 The prototype does not connect to an email provider and does not send emails automatically.
 
@@ -75,16 +75,20 @@ The prototype is a Python module, not a standalone HTTP API or meeting-platform 
 
 The latest recorded automated test results are:
 
+
 | Project | Tests passed | Verification status |
 |---|---:|---|
 | Knowledge Brain | 46 | Latest verified run on October 19, 2026 |
-| Inbox Agent | 5 | Previously reported run on October 18, 2026 |
+| Inbox Agent | 6 | Latest verified run on October 19, 2026 |
 | Meeting-to-Scope of Work | 10 | Previously reported run on October 18, 2026 |
-| **Total** | **61** | **Results from three separate test runs** |
+| **Total** | **62** | **Results from three separate test runs** |
 
-The Task 1 run includes regression tests for keyword normalization, supported paraphrases, unsupported questions, and multiple-topic retrieval. The Task 2 and Task 3 counts have not been reconfirmed in the latest Task 1 run.
 
-Task 2 and Task 3 unit tests use mocked model and API responses. Manual live tests were also performed using fictional data, but those examples do not establish representative real-world accuracy or production reliability.
+
+The Task 1 and Task 2 counts were verified on October 19, 2026. The Task 3 count was previously reported on October 18, 2026, and should be reconfirmed.
+
+Task 2 and Task 3 unit tests use mocked model and API responses. Separate manual live tests using fictional data have also been performed, but those examples do not establish representative real-world accuracy or production reliability.
+
 
 
 ## 3. Technology and Repository Structure
@@ -287,7 +291,7 @@ Run from the repository root:
 .\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task2-inbox-agent\tests -p test_inbox_agent.py -v
 ```
 
-The latest reported dedicated run passed five tests.
+The latest reported dedicated run passed six tests on October 19, 2026.
 
 ### Task 3
 
@@ -313,6 +317,30 @@ From the repository root, run the evaluation with the API already running:
 The latest recorded run passed 20/20 cases. All 16 supported retrieval cases passed, all four unsupported questions returned no sources, and both multi-topic cases retrieved every expected source. The measured average response time was 20.26 ms, with a median of 15.52 ms.
 
 The evaluation dataset and generated JSON and CSV reports are stored in `task1-knowledge-brain/evaluation/`. The dataset uses fictional `example.test` articles and does not establish accuracy on verified support documentation or generated-answer factuality.
+
+
+
+### Task 2 — Classification evaluation
+
+A 50-case fictional email benchmark was run on October 19, 2026, using the local Ollama model `qwen2.5:7b`.
+
+The latest recorded results were:
+
+| Metric | Result |
+|---|---:|
+| Email cases | 50 |
+| Successful model calls | 50/50 |
+| Category accuracy | 50/50 (100%) |
+| Urgency accuracy | 40/50 (80%) |
+| Category and urgency both correct | 40/50 (80%) |
+| Average classification latency | 8,797.94 ms |
+| Median classification latency | 7,236.28 ms |
+
+The benchmark and generated JSON/CSV reports are stored in `task2-inbox-agent/evaluation/`. The evaluation is reproducible using `run_inbox_eval.py` with Ollama running.
+
+The classifier was updated to accept valid JSON surrounded by Markdown code fences after this format caused classification parsing errors. A regression test covers that format.
+
+The latest results are based on a hand-authored fictional dataset used during prompt tuning. The urgency labels have not been independently validated, and the results do not establish accuracy on unseen or real customer emails.
 
 
 ### Testing limitations

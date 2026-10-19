@@ -1,0 +1,374 @@
+{
+    "dataset_name": "Inbox Agent Classification Evaluation",
+    "dataset_version": "1.0",
+    "data_policy": "Fictional customer emails only; no real customer data.",
+    "evaluation_scope": [
+        "email_category",
+        "email_urgency"
+    ],
+    "categories": [
+        "account_profile",
+        "listing_publishing",
+        "email_notifications",
+        "billing",
+        "technical_issue",
+        "other"
+    ],
+    "urgency_levels": [
+        "low",
+        "normal",
+        "high"
+    ],
+    "cases": [
+        {
+            "id": "IN01",
+            "subject": "Forgot my password",
+            "body": "Hello, I cannot sign in because I forgot my password. Could you tell me how to reset it?",
+            "expected_category": "account_profile",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN02",
+            "subject": "Update my login email",
+            "body": "I would like to change the email address associated with my account. There is no rush; whenever convenient is fine.",
+            "expected_category": "account_profile",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN03",
+            "subject": "Change profile photo",
+            "body": "Could you explain how I can replace the photo displayed on my profile?",
+            "expected_category": "account_profile",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN04",
+            "subject": "My display name is incorrect",
+            "body": "I updated my name in my account settings yesterday, but the old display name still appears. Please advise.",
+            "expected_category": "account_profile",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN05",
+            "subject": "URGENT: Locked out before a presentation",
+            "body": "I am locked out of my account and my client presentation starts in 20 minutes. I need access urgently.",
+            "expected_category": "account_profile",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN06",
+            "subject": "Add a phone number to my profile",
+            "body": "I want to add my new contact phone number to my profile. This is not urgent; please let me know the steps when you can.",
+            "expected_category": "account_profile",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN07",
+            "subject": "Incorrect address in account settings",
+            "body": "My account still shows my old office address. How can I update the address on my profile?",
+            "expected_category": "account_profile",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN08",
+            "subject": "Deactivate a former employee's account",
+            "body": "A staff member has left our company. Please explain how we can deactivate their account and remove their access today.",
+            "expected_category": "account_profile",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN09",
+            "subject": "New listing inquiry emails are missing",
+            "body": "We are no longer receiving email alerts when someone inquires about our listings. Could you help us troubleshoot this?",
+            "expected_category": "email_notifications",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN10",
+            "subject": "Turn off the weekly digest",
+            "body": "Please show me how to disable the weekly summary email. There is no deadline for this request.",
+            "expected_category": "email_notifications",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN11",
+            "subject": "Confirmation emails have stopped",
+            "body": "Since Monday, I have not received the usual email confirmations. I checked my inbox but cannot find them.",
+            "expected_category": "email_notifications",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN12",
+            "subject": "URGENT: Signup alerts stopped today",
+            "body": "Our team has received several new customer registrations today, but none of the email alerts arrived. We need these alerts working immediately to process today's requests.",
+            "expected_category": "email_notifications",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN13",
+            "subject": "Change notification frequency",
+            "body": "Can I change my email notification preferences so that I receive a daily summary instead of individual alerts? No rush.",
+            "expected_category": "email_notifications",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN14",
+            "subject": "Duplicate notification emails",
+            "body": "Every time a customer sends an inquiry, I receive the same notification twice. Could you help me understand why?",
+            "expected_category": "email_notifications",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN15",
+            "subject": "Enable alerts for new inquiries",
+            "body": "I want to receive email notifications whenever a new inquiry arrives for my business listing. Please explain how to enable them.",
+            "expected_category": "email_notifications",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN16",
+            "subject": "Unsubscribe from the weekly email",
+            "body": "I no longer want to receive the weekly product summary. Please tell me how to turn it off; this can wait.",
+            "expected_category": "email_notifications",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN17",
+            "subject": "I was charged twice",
+            "body": "My statement shows two charges for what appears to be the same subscription payment. Could you review this and explain what happened?",
+            "expected_category": "billing",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN18",
+            "subject": "Update invoice contact details",
+            "body": "Please explain how I can change the billing contact name and email address on future invoices. There is no rush.",
+            "expected_category": "billing",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN19",
+            "subject": "Receipt for last week's payment",
+            "body": "Could you send me instructions for finding the receipt for the payment I made last week? This is just for my records.",
+            "expected_category": "billing",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN20",
+            "subject": "Invoice amount differs from quote",
+            "body": "The amount on our latest invoice is higher than the amount quoted to us. Please help us understand the difference before our accounting review on Friday.",
+            "expected_category": "billing",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN21",
+            "subject": "URGENT: Payment failed before renewal",
+            "body": "My subscription payment failed and the service renewal is due tomorrow. Please advise how to resolve the payment problem before access is interrupted.",
+            "expected_category": "billing",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN22",
+            "subject": "Request for a refund",
+            "body": "I appear to have paid for the same subscription twice by mistake. Could someone review the charges and explain whether a refund is possible?",
+            "expected_category": "billing",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN23",
+            "subject": "Incorrect tax details on invoice",
+            "body": "The tax registration information on our invoice is incorrect. We need the corrected invoice before tomorrow's tax filing deadline.",
+            "expected_category": "billing",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN24",
+            "subject": "Copy of next month's renewal invoice",
+            "body": "Could you tell me how to obtain a copy of the upcoming renewal invoice? This is for planning next month's budget, so it is not urgent.",
+            "expected_category": "billing",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN25",
+            "subject": "Dashboard returns an error",
+            "body": "The dashboard keeps showing an error when I open it, and our team cannot access the reports needed for today's work.",
+            "expected_category": "technical_issue",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN26",
+            "subject": "Error when saving changes",
+            "body": "Whenever I click Save after editing a page, an error message appears and my changes are not stored. Can you help?",
+            "expected_category": "technical_issue",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN27",
+            "subject": "Dashboard is slow in Firefox",
+            "body": "The dashboard takes a long time to load when I use Firefox. Other websites seem to work normally. What should I check?",
+            "expected_category": "technical_issue",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN28",
+            "subject": "Image upload gets stuck",
+            "body": "When I upload a PNG image, the progress indicator stays on the screen indefinitely and the image never finishes uploading.",
+            "expected_category": "technical_issue",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN29",
+            "subject": "URGENT: Website unavailable before launch",
+            "body": "Our public website is unavailable to all visitors, and our planned launch is in 30 minutes. Please treat this as urgent.",
+            "expected_category": "technical_issue",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN30",
+            "subject": "Blank screen after update",
+            "body": "After the latest update, the application sometimes opens to a blank white screen. Restarting my browser did not resolve it.",
+            "expected_category": "technical_issue",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN31",
+            "subject": "URGENT: API integration has stopped",
+            "body": "Our API requests are timing out and order synchronization has completely stopped. Our operations team cannot process new orders until this is fixed.",
+            "expected_category": "technical_issue",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN32",
+            "subject": "CSV export is incomplete",
+            "body": "The CSV export completes, but some records are missing from the downloaded file. Can you help identify the cause?",
+            "expected_category": "technical_issue",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN33",
+            "subject": "Mobile navigation overlaps the login button",
+            "body": "On my iPhone, the navigation menu overlaps the login button and makes it difficult to use the page. Please let me know if there is a workaround.",
+            "expected_category": "technical_issue",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN34",
+            "subject": "Partnership proposal",
+            "body": "We would like to discuss a possible marketing partnership between our companies. Please let us know who we should contact. There is no rush.",
+            "expected_category": "other",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN35",
+            "subject": "Question about multilingual storefronts",
+            "body": "I am researching software options and would like to know whether your product supports storefronts in multiple languages.",
+            "expected_category": "other",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN36",
+            "subject": "Request a product demonstration",
+            "body": "Our team is considering your product and would like to schedule a demonstration sometime next month. Please tell us how to arrange one.",
+            "expected_category": "other",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN37",
+            "subject": "Guest speaker opportunity",
+            "body": "I would be interested in contributing as a guest speaker to an upcoming industry webinar. Please let me know whether you accept speaker proposals.",
+            "expected_category": "other",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN38",
+            "subject": "Thank you for the excellent support",
+            "body": "Thank you to your support team for helping us resolve our questions last week. The explanations were clear and very helpful.",
+            "expected_category": "other",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN39",
+            "subject": "Application for a support position",
+            "body": "I am writing to ask whether your company has any current openings for support specialists. I would be happy to provide my resume.",
+            "expected_category": "other",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN40",
+            "subject": "Unrelated question",
+            "body": "Could someone recommend a good restaurant for dinner? I am visiting the area next weekend.",
+            "expected_category": "other",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN41",
+            "subject": "Feature suggestion: dark mode",
+            "body": "I would like to suggest adding a dark mode to the dashboard. It would make the interface more comfortable for users who work at night.",
+            "expected_category": "other",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN42",
+            "subject": "Partner program information",
+            "body": "Could you provide information about how companies join your partner program? We are exploring possible opportunities for next quarter.",
+            "expected_category": "other",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN43",
+            "subject": "Request for a public case study",
+            "body": "Do you have a public case study describing how a customer uses your product? We are researching several providers and would appreciate a link.",
+            "expected_category": "other",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN44",
+            "subject": "Question about your webinar schedule",
+            "body": "Where can I find the schedule for upcoming public webinars? I would like to attend one when my calendar allows.",
+            "expected_category": "other",
+            "expected_urgency": "low"
+        },
+        {
+            "id": "IN45",
+            "subject": "Request for a sales contact",
+            "body": "Our company is evaluating several software options. Could you direct me to the appropriate person to discuss our general requirements?",
+            "expected_category": "other",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN46",
+            "subject": "Forgotten account password",
+            "body": "I cannot remember my password and need to regain access. There is no immediate deadline, but I would appreciate the reset instructions.",
+            "expected_category": "account_profile",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN47",
+            "subject": "Listing still shows draft status",
+            "body": "I completed the required details for my business listing, but it still shows Draft. Could you explain how to publish it?",
+            "expected_category": "listing_publishing",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN48",
+            "subject": "Publish our listing before today's event",
+            "body": "We need our business listing published before an event that starts in 45 minutes. Please help us understand what must be done.",
+            "expected_category": "listing_publishing",
+            "expected_urgency": "high"
+        },
+        {
+            "id": "IN49",
+            "subject": "How do I edit a published listing?",
+            "body": "I need to update the description and opening hours on my published business listing. Please share the recommended steps.",
+            "expected_category": "listing_publishing",
+            "expected_urgency": "normal"
+        },
+        {
+            "id": "IN50",
+            "subject": "Remove a duplicate listing",
+            "body": "I noticed that we accidentally created two listings for the same business. Could you explain how to remove or correct the duplicate? There is no rush.",
+            "expected_category": "listing_publishing",
+            "expected_urgency": "low"
+        }
+    ]
+}
