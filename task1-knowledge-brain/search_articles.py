@@ -30,6 +30,21 @@ STOP_WORDS = {
     "what",
     "with",
     "do",
+    "can",
+    "you",
+    "me",
+    "my",
+    "help",
+    "product",
+    "support",
+}
+
+TOKEN_ALIASES = {
+    "listings": "listing",
+    "reviewed": "review",
+    "reviews": "review",
+    "avatar": "photo",
+    "avatars": "photo",
 }
 
 
@@ -38,11 +53,15 @@ class ArticleDataError(Exception):
 
 
 def keywords(text: str) -> set[str]:
-    """Return lowercase, non-stop-word tokens from text."""
+    """Return normalized, lowercase, non-stop-word tokens."""
 
     tokens = re.findall(r"[a-z0-9]+", text.lower())
-    return {token for token in tokens if token not in STOP_WORDS}
 
+    return {
+        TOKEN_ALIASES.get(token, token)
+        for token in tokens
+        if token not in STOP_WORDS
+    }
 
 def load_articles() -> list[dict[str, Any]]:
     """Load and validate the local fictional article dataset."""
@@ -92,7 +111,7 @@ def search_articles(question: str, limit: int = 3) -> list[dict[str, Any]]:
         text_only_matches = (query_keywords & text_keywords) - title_matches
         score = (3 * len(title_matches)) + len(text_only_matches)
 
-        if score == 0:
+        if score < 2:
             continue
 
         # Keep the source label visible; this data is fictional test data,

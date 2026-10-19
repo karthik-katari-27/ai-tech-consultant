@@ -26,22 +26,24 @@ The evaluation process should:
 - Require human review of customer-facing drafts.
 - Obtain appropriate permissions before collecting or processing third-party content.
 
+
 ## 3. Current Automated Test Results
 
-The latest reported automated test runs passed all 56 tests across three separate runs.
+The latest Task 1 automated test run passed all 46 tests in the Knowledge Brain test directory on October 19, 2026. This run includes regression tests for supported paraphrases, unsupported questions, and multiple-topic retrieval.
 
-| Project | Tests passed | Test approach |
+| Project | Tests passed | Test approach and status |
 |---|---:|---|
-| Task 1 — Knowledge Brain | 41 | API, article handling, service, and related unit tests |
-| Task 2 — Inbox Agent | 5 | Mocked model and Knowledge Brain responses |
-| Task 3 — Meeting-to-Scope of Work | 10 | Mocked model and Knowledge Brain responses |
-| **Total** | **56** | **Separate test runs** |
+| Task 1 — Knowledge Brain | 46 | Latest verified unit-test run |
+| Task 2 — Inbox Agent | 5 | Previously reported run using mocked model and Knowledge Brain responses |
+| Task 3 — Meeting-to-Scope of Work | 10 | Previously reported run using mocked model and Knowledge Brain responses |
+| **Total recorded across separate runs** | **61** | Individually reported results, not one combined test run |
 
-These results were reported by the user during development on October 18, 2026.
+The Task 2 and Task 3 results were reported on October 18, 2026, and were not rerun during the latest Task 1 evaluation. Their current status should be reconfirmed by rerunning those suites.
 
-The Task 2 and Task 3 tests do not make live AI requests. They verify selected behaviors using mocked responses. Their results do not establish real-world classification accuracy, draft quality, or live end-to-end reliability.
+Passing unit tests does not establish production readiness or real-world AI accuracy. The Task 2 and Task 3 tests use mocked responses and do not establish live end-to-end reliability.
 
-The 56 tests were run as three separate suites, not as one combined test-discovery command.
+The latest Task 1 run and the previous Task 2 and Task 3 runs were executed as separate test suites, not as one combined test-discovery command.
+
 
 ## 4. Reproducing the Automated Tests
 
@@ -53,7 +55,7 @@ Run these commands from the `ai-tech-consultant` repository root in Windows Powe
 .\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task1-knowledge-brain\tests -v
 ```
 
-Reported result: 41 tests passed.
+Reported result: 46 tests passed in the latest Task 1 test run on October 19, 2026.
 
 ### Task 2 — Inbox Agent
 
@@ -125,41 +127,70 @@ An initial test containing the phrase "fictional test email" returned three arti
 
 
 
-## 6. Planned Knowledge Brain Retrieval Evaluation
 
-### Evaluation goals
+## 6. Knowledge Brain Retrieval Evaluation
 
-Evaluate whether retrieval returns relevant articles for questions about the product knowledge represented in the dataset.
+### Evaluation setup
 
-The test set should include:
+A 20-case retrieval evaluation was run on October 19, 2026, against the local Knowledge Brain API at `http://127.0.0.1:8001`.
 
-- Questions using wording found directly in article titles.
-- Questions using synonyms or alternative wording.
-- Questions containing spelling mistakes.
-- Questions containing insufficient context or ambiguous intent.
-- Questions for which no approved article provides sufficient evidence.
+The dataset is located at:
 
-### Recording each case
+`task1-knowledge-brain/evaluation/knowledge_brain_cases.json`
 
-For each test question, record:
+It uses fictional test articles and the `example.test` domain. These articles are not verified Brilliant Directories support documentation.
 
-- The question.
-- Expected relevant article identifiers.
-- Actual retrieved articles.
-- Whether an expected article appears in the results.
-- Relevant observations and failure cases.
+The cases cover:
+- Direct questions and paraphrases of supported topics.
+- Questions about draft listing publication and profile photos.
+- Questions involving multiple topics.
+- Unsupported questions about refunds, subscriptions, and support contact details.
+- An ambiguous product question.
 
-### Potential retrieval metrics
+The evaluation runner sends each question to `POST /ask`, compares the returned source URLs with the expected URLs, checks whether unsupported questions return no sources, and records response latency.
 
-Possible metrics include:
+### Observed results
 
-- **Recall@k:** Whether relevant articles appear among the first `k` results.
-- **Precision@k:** The proportion of the first `k` results that are relevant.
-- **Mean Reciprocal Rank (MRR):** How highly the first relevant article is ranked.
+| Metric | Result |
+|---|---:|
+| Evaluation cases | 20 |
+| API calls completed without errors | 20/20 |
+| Overall cases passed | 20/20 (100%) |
+| Supported retrieval cases passed | 16/16 (100%) |
+| Unsupported questions correctly returned no sources | 4/4 (100%) |
+| Unsupported false positives | 0 |
+| Multi-topic cases with all expected sources | 2/2 (100%) |
+| Average observed API response time | 20.26 ms |
+| Median observed API response time | 15.52 ms |
 
-These metrics have not been measured. Numerical targets should be selected and justified before a retrieval evaluation is run.
+A case passes when all expected source URLs are retrieved for a supported question. A multi-topic case passes only when every expected source is present. An unsupported case passes when the API returns no sources.
 
-The current keyword-based retrieval system should be evaluated on an explicitly reviewed dataset before claims about its quality are made.
+### Reproduction
+
+From the `task1-knowledge-brain` directory, with the Knowledge Brain API running on port `8001`, run:
+
+```powershell
+.\.venv\Scripts\python.exe .\evaluation\run_knowledge_brain_eval.py
+```
+
+The runner generates:
+- `evaluation/knowledge_brain_eval_results.json`
+- `evaluation/knowledge_brain_eval_results.csv`
+
+These reports include the per-case outcomes and summary metrics.
+
+### Interpretation and limitations
+
+The observed 20/20 result applies only to this small, hand-authored fictional test dataset and the tested implementation. It does not establish 100% accuracy on real support questions or on the official Brilliant Directories support center.
+
+The response-time measurements describe one evaluation run in the local development environment. They are not a load test or a production latency benchmark.
+
+The current evaluation focuses on retrieval and abstention behavior. It does not establish generated-answer factuality, citation correctness, model quality, or production reliability.
+
+The keyword retrieval implementation uses a minimum score threshold, selected token normalization rules, and stop words. These rules improved the results on this dataset, but broader evaluation is needed to identify weaknesses on unseen questions and real support content.
+
+Further evaluation should use a larger, reviewed dataset, including spelling errors, ambiguous questions, harder paraphrases, and unsupported requests that share keywords with supported articles. Real support content should only be collected and evaluated after the necessary permissions have been confirmed.
+
 
 ## 7. Planned Grounding and Citation Evaluation
 
@@ -208,7 +239,7 @@ Compare generated drafts with human-reviewed reference documents. Record omissio
 
 The approval workflow must remain human-controlled.
 
-The current five automated tests validate selected behavior and output structure. They do not establish the accuracy or completeness of generated scopes on real meeting transcripts.
+The current ten automated tests validate selected behavior and output structure. They do not establish the accuracy or completeness of generated scopes on real meeting transcripts.
 
 ## 10. Permissions and Data Safety
 

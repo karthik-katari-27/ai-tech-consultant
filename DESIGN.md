@@ -31,7 +31,7 @@ Implemented components:
 - Local Ollama integration through `POST /ask-local`.
 - Automated API, article-loader, sitemap, and local-AI service tests.
 
-The latest reported complete test run passed 41 tests.
+The latest Task 1 test run on October 19, 2026, passed 46 tests, including regression tests for supported paraphrases, unsupported questions, and multiple-topic retrieval.
 
 ### Task 2 — Inbox Agent
 
@@ -70,20 +70,22 @@ The latest reported dedicated test run passed ten tests.
 
 The prototype is a Python module, not a standalone HTTP API or meeting-platform integration.
 
+
 ### Verification Summary
 
-The latest reported test runs were:
+The latest recorded automated test results are:
 
-| Project | Tests passed | Verification |
+| Project | Tests passed | Verification status |
 |---|---:|---|
-| Knowledge Brain | 41 | Automated test suite |
-| Inbox Agent | 5 | Dedicated automated tests |
-| Meeting-to-Scope of Work | 5 | Dedicated automated tests |
-| **Total** | **51** | **Separate test runs** |
+| Knowledge Brain | 46 | Latest verified run on October 19, 2026 |
+| Inbox Agent | 5 | Previously reported run on October 18, 2026 |
+| Meeting-to-Scope of Work | 10 | Previously reported run on October 18, 2026 |
+| **Total** | **61** | **Results from three separate test runs** |
 
-Task 2 and Task 3 tests use mocks for model and API responses. They do not prove that those workflows work end to end with live services.
+The Task 1 run includes regression tests for keyword normalization, supported paraphrases, unsupported questions, and multiple-topic retrieval. The Task 2 and Task 3 counts have not been reconfirmed in the latest Task 1 run.
 
-Task 1's `/ask-local` endpoint was also tested successfully with a live request using the local Qwen model and fictional reference data.
+Task 2 and Task 3 unit tests use mocked model and API responses. Manual live tests were also performed using fictional data, but those examples do not establish representative real-world accuracy or production reliability.
+
 
 ## 3. Technology and Repository Structure
 
@@ -103,6 +105,11 @@ ai-tech-consultant/
 ├── shared-docs/
 ├── task1-knowledge-brain/
 │   ├── data/
+│   ├── evaluation/
+│   │   ├── knowledge_brain_cases.json
+│   │   ├── run_knowledge_brain_eval.py
+│   │   ├── knowledge_brain_eval_results.json
+│   │   └── knowledge_brain_eval_results.csv
 │   ├── tests/
 │   ├── main.py
 │   ├── search_articles.py
@@ -130,13 +137,15 @@ ai-tech-consultant/
 
 ### Request flow
 
+
 1. A client sends a question to the FastAPI application.
 2. The API validates the input.
 3. The search module loads and validates the local JSON dataset.
-4. Keyword matching identifies potentially relevant articles.
-5. Matching title keywords receive more weight than text-only matches.
-6. Matching articles are returned with their source metadata.
-7. Responses identify the fictional nature of the sample data.
+4. Keyword search tokenizes the query, removes configured stop words, and normalizes selected word variations.
+5. Each matching title keyword contributes three points; each matching article-text keyword that did not match the title contributes one point.
+6. Articles scoring below two points are excluded. The remaining matches are ranked by score, with up to three results returned by default.
+7. Results include source metadata and the fictional-data source label.
+
 
 ### API endpoints
 
@@ -268,7 +277,7 @@ Run from the `task1-knowledge-brain` directory:
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-The latest reported run passed 41 tests.
+The latest reported run on October 19, 2026, passed 46 tests.
 
 ### Task 2
 
@@ -288,7 +297,23 @@ Run from the repository root:
 .\task1-knowledge-brain\.venv\Scripts\python.exe -m unittest discover -s .\task3-meeting-to-scope\tests -p test_meeting_to_scope.py -v
 ```
 
-The latest reported dedicated run passed five tests.
+The latest reported dedicated run passed ten tests.
+
+
+### Task 1 — Retrieval evaluation
+
+A separate 20-case evaluation was run on October 19, 2026, against the Knowledge Brain `/ask` endpoint at `http://127.0.0.1:8001`.
+
+From the repository root, run the evaluation with the API already running:
+
+```powershell
+.\task1-knowledge-brain\.venv\Scripts\python.exe .\task1-knowledge-brain\evaluation\run_knowledge_brain_eval.py
+```
+
+The latest recorded run passed 20/20 cases. All 16 supported retrieval cases passed, all four unsupported questions returned no sources, and both multi-topic cases retrieved every expected source. The measured average response time was 20.26 ms, with a median of 15.52 ms.
+
+The evaluation dataset and generated JSON and CSV reports are stored in `task1-knowledge-brain/evaluation/`. The dataset uses fictional `example.test` articles and does not establish accuracy on verified support documentation or generated-answer factuality.
+
 
 ### Testing limitations
 
@@ -325,7 +350,7 @@ Current limitations include:
 - No meeting-platform integration for Task 3.
 - No production deployment for the Inbox Agent or Meeting-to-Scope workflows.
 - No representative real-world evaluation dataset for Tasks 2 and 3.
-- No completed evaluation of retrieval quality or AI-generated output accuracy.
+- A 20-case fictional retrieval evaluation has been completed, but retrieval accuracy on verified support content and AI-generated answer accuracy have not been established.
 
 Recommended future work:
 

@@ -1,0 +1,181 @@
+{
+    "dataset_name": "Knowledge Brain Evaluation",
+    "dataset_version": "1.0",
+    "data_policy": "Fictional test data only; not verified product documentation.",
+    "cases": [
+        {
+            "id": "KB01",
+            "category": "supported_retrieval",
+            "question": "How do I publish a directory listing?",
+            "expected_source_urls": [
+                "https://example.test/support/publish-listing"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB02",
+            "category": "paraphrase",
+            "question": "What steps should an editor follow to publish a listing?",
+            "expected_source_urls": [
+                "https://example.test/support/publish-listing"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB03",
+            "category": "paraphrase",
+            "question": "How can I make my directory listing visible?",
+            "expected_source_urls": [
+                "https://example.test/support/publish-listing"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB04",
+            "category": "verification",
+            "question": "After choosing Publish, how can I verify that my listing appears?",
+            "expected_source_urls": [
+                "https://example.test/support/publish-listing"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB05",
+            "category": "workflow",
+            "question": "How are draft listings reviewed before publication?",
+            "expected_source_urls": [
+                "https://example.test/support/publish-listing"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB06",
+            "category": "paraphrase",
+            "question": "How do I publish a business listing on the site?",
+            "expected_source_urls": [
+                "https://example.test/support/publish-listing"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB07",
+            "category": "multiple_topics",
+            "question": "How do I publish a listing, and where can I find information about email notifications?",
+            "expected_source_urls": [
+                "https://example.test/support/publish-listing",
+                "https://example.test/support/email-notifications"
+            ],
+            "expected_behavior": "retrieve_multiple_relevant_sources"
+        },
+        {
+            "id": "KB08",
+            "category": "supported_retrieval",
+            "question": "How can I check email notifications?",
+            "expected_source_urls": [
+                "https://example.test/support/email-notifications"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB09",
+            "category": "troubleshooting",
+            "question": "Why am I not receiving email notifications?",
+            "expected_source_urls": [
+                "https://example.test/support/email-notifications"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB10",
+            "category": "paraphrase",
+            "question": "How can I change notification preferences?",
+            "expected_source_urls": [
+                "https://example.test/support/email-notifications"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB11",
+            "category": "paraphrase",
+            "question": "Where can I find information about email alerts?",
+            "expected_source_urls": [
+                "https://example.test/support/email-notifications"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB12",
+            "category": "multiple_topics",
+            "question": "Can you help with email notifications and publishing a directory listing?",
+            "expected_source_urls": [
+                "https://example.test/support/email-notifications",
+                "https://example.test/support/publish-listing"
+            ],
+            "expected_behavior": "retrieve_multiple_relevant_sources"
+        },
+        {
+            "id": "KB13",
+            "category": "supported_retrieval",
+            "question": "How do I update my profile photo?",
+            "expected_source_urls": [
+                "https://example.test/support/profile-photo"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB14",
+            "category": "paraphrase",
+            "question": "How can I replace the photo shown on my profile?",
+            "expected_source_urls": [
+                "https://example.test/support/profile-photo"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB15",
+            "category": "paraphrase",
+            "question": "How do I upload a new profile image?",
+            "expected_source_urls": [
+                "https://example.test/support/profile-photo"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB16",
+            "category": "synonym",
+            "question": "How can I change my avatar?",
+            "expected_source_urls": [
+                "https://example.test/support/profile-photo"
+            ],
+            "expected_behavior": "retrieve_relevant_source"
+        },
+        {
+            "id": "KB17",
+            "category": "unsupported_question",
+            "question": "What is the refund policy?",
+            "expected_source_urls": [],
+            "expected_behavior": "return_no_supported_source"
+        },
+        {
+            "id": "KB18",
+            "category": "unsupported_question",
+            "question": "How do I cancel my subscription?",
+            "expected_source_urls": [],
+            "expected_behavior": "return_no_supported_source"
+        },
+        {
+            "id": "KB19",
+            "category": "unsupported_question",
+            "question": "What is the official support phone number?",
+            "expected_source_urls": [],
+            "expected_behavior": "return_no_supported_source"
+        },
+        {
+            "id": "KB20",
+            "category": "ambiguous_question",
+            "question": "Can you help me with the product?",
+            "expected_source_urls": [],
+            "expected_behavior": "return_no_supported_source"
+        }
+    ]
+}

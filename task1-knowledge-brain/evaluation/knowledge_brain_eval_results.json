@@ -1,0 +1,430 @@
+{
+  "dataset_name": "Knowledge Brain Evaluation",
+  "dataset_version": "1.0",
+  "data_policy": "Fictional test data only; not verified product documentation.",
+  "api_base_url": "http://127.0.0.1:8001",
+  "evaluated_at_utc": "2026-10-19T09:28:59.923220+00:00",
+  "metrics_note": "Retrieval-only evaluation using the provided fictional test dataset. Results do not establish accuracy against official product documentation.",
+  "summary": {
+    "total_cases": 20,
+    "api_calls_without_error": 20,
+    "api_call_errors": 0,
+    "overall_passed_cases": 20,
+    "overall_case_accuracy": 1.0,
+    "supported_cases": 16,
+    "supported_cases_passed": 16,
+    "supported_case_accuracy": 1.0,
+    "unsupported_cases": 4,
+    "unsupported_cases_correctly_abstained": 4,
+    "abstention_accuracy": 1.0,
+    "unsupported_false_positive_count": 0,
+    "multiple_topic_cases": 2,
+    "multiple_topic_cases_with_all_sources": 2,
+    "average_latency_ms": 20.26,
+    "median_latency_ms": 15.52
+  },
+  "results": [
+    {
+      "id": "KB01",
+      "category": "supported_retrieval",
+      "question": "How do I publish a directory listing?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 104.7,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB02",
+      "category": "paraphrase",
+      "question": "What steps should an editor follow to publish a listing?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 22.57,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB03",
+      "category": "paraphrase",
+      "question": "How can I make my directory listing visible?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 7.6,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB04",
+      "category": "verification",
+      "question": "After choosing Publish, how can I verify that my listing appears?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 24.3,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB05",
+      "category": "workflow",
+      "question": "How are draft listings reviewed before publication?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 9.11,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB06",
+      "category": "paraphrase",
+      "question": "How do I publish a business listing on the site?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/publish-listing"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 21.94,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB07",
+      "category": "multiple_topics",
+      "question": "How do I publish a listing, and where can I find information about email notifications?",
+      "expected_behavior": "retrieve_multiple_relevant_sources",
+      "expected_source_urls": [
+        "https://example.test/support/publish-listing",
+        "https://example.test/support/email-notifications"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/email-notifications",
+        "https://example.test/support/publish-listing"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/publish-listing",
+        "https://example.test/support/email-notifications"
+      ],
+      "expected_source_count": 2,
+      "retrieved_source_count": 2,
+      "source_recall": 1.0,
+      "latency_ms": 17.51,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB08",
+      "category": "supported_retrieval",
+      "question": "How can I check email notifications?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 4.76,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB09",
+      "category": "troubleshooting",
+      "question": "Why am I not receiving email notifications?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 7.76,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB10",
+      "category": "paraphrase",
+      "question": "How can I change notification preferences?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 5.16,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB11",
+      "category": "paraphrase",
+      "question": "Where can I find information about email alerts?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/email-notifications"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 23.33,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB12",
+      "category": "multiple_topics",
+      "question": "Can you help with email notifications and publishing a directory listing?",
+      "expected_behavior": "retrieve_multiple_relevant_sources",
+      "expected_source_urls": [
+        "https://example.test/support/email-notifications",
+        "https://example.test/support/publish-listing"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/publish-listing",
+        "https://example.test/support/email-notifications"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/email-notifications",
+        "https://example.test/support/publish-listing"
+      ],
+      "expected_source_count": 2,
+      "retrieved_source_count": 2,
+      "source_recall": 1.0,
+      "latency_ms": 12.96,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB13",
+      "category": "supported_retrieval",
+      "question": "How do I update my profile photo?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 8.4,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB14",
+      "category": "paraphrase",
+      "question": "How can I replace the photo shown on my profile?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 13.0,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB15",
+      "category": "paraphrase",
+      "question": "How do I upload a new profile image?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 13.53,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB16",
+      "category": "synonym",
+      "question": "How can I change my avatar?",
+      "expected_behavior": "retrieve_relevant_source",
+      "expected_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "actual_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "matched_source_urls": [
+        "https://example.test/support/profile-photo"
+      ],
+      "expected_source_count": 1,
+      "retrieved_source_count": 1,
+      "source_recall": 1.0,
+      "latency_ms": 28.08,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB17",
+      "category": "unsupported_question",
+      "question": "What is the refund policy?",
+      "expected_behavior": "return_no_supported_source",
+      "expected_source_urls": [],
+      "actual_source_urls": [],
+      "matched_source_urls": [],
+      "expected_source_count": 0,
+      "retrieved_source_count": 0,
+      "source_recall": null,
+      "latency_ms": 24.97,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB18",
+      "category": "unsupported_question",
+      "question": "How do I cancel my subscription?",
+      "expected_behavior": "return_no_supported_source",
+      "expected_source_urls": [],
+      "actual_source_urls": [],
+      "matched_source_urls": [],
+      "expected_source_count": 0,
+      "retrieved_source_count": 0,
+      "source_recall": null,
+      "latency_ms": 27.0,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB19",
+      "category": "unsupported_question",
+      "question": "What is the official support phone number?",
+      "expected_behavior": "return_no_supported_source",
+      "expected_source_urls": [],
+      "actual_source_urls": [],
+      "matched_source_urls": [],
+      "expected_source_count": 0,
+      "retrieved_source_count": 0,
+      "source_recall": null,
+      "latency_ms": 9.76,
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "KB20",
+      "category": "ambiguous_question",
+      "question": "Can you help me with the product?",
+      "expected_behavior": "return_no_supported_source",
+      "expected_source_urls": [],
+      "actual_source_urls": [],
+      "matched_source_urls": [],
+      "expected_source_count": 0,
+      "retrieved_source_count": 0,
+      "source_recall": null,
+      "latency_ms": 18.82,
+      "passed": true,
+      "error": ""
+    }
+  ]
+}

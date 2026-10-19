@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from search_articles import ArticleDataError, load_articles
+from search_articles import ArticleDataError, load_articles, search_articles
 
 
 class LoadArticlesTests(unittest.TestCase):
@@ -150,6 +150,68 @@ class LoadArticlesTests(unittest.TestCase):
                 load_articles()
 
         self.assertEqual(str(raised_error.exception), "Article data is unavailable.")
+
+
+class SearchArticlesTests(unittest.TestCase):
+    """Regression tests for supported and unsupported search queries."""
+
+    def test_draft_review_paraphrase_finds_listing_article(self) -> None:
+        """A draft-review question should retrieve the listing guide."""
+
+        results = search_articles(
+            "How are draft listings reviewed before publication?"
+        )
+        result_urls = {result["url"] for result in results}
+
+        self.assertIn(
+            "https://example.test/support/publish-listing",
+            result_urls,
+        )
+
+    def test_avatar_synonym_finds_profile_photo_article(self) -> None:
+        """The word avatar should match the profile photo guide."""
+
+        results = search_articles("How can I change my avatar?")
+        result_urls = {result["url"] for result in results}
+
+        self.assertIn(
+            "https://example.test/support/profile-photo",
+            result_urls,
+        )
+
+    def test_unsupported_phone_question_returns_no_results(self) -> None:
+        """A question about an unavailable phone number should abstain."""
+
+        results = search_articles(
+            "What is the official support phone number?"
+        )
+
+        self.assertEqual(results, [])
+
+    def test_ambiguous_product_question_returns_no_results(self) -> None:
+        """A vague product question should not return unrelated articles."""
+
+        results = search_articles("Can you help me with the product?")
+
+        self.assertEqual(results, [])
+
+    def test_multiple_topics_finds_both_expected_articles(self) -> None:
+        """A question covering two topics should find both relevant guides."""
+
+        results = search_articles(
+            "How do I publish a listing, and where can I find "
+            "information about email notifications?"
+        )
+        result_urls = {result["url"] for result in results}
+
+        self.assertIn(
+            "https://example.test/support/publish-listing",
+            result_urls,
+        )
+        self.assertIn(
+            "https://example.test/support/email-notifications",
+            result_urls,
+        )
 
 
 if __name__ == "__main__":
